@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://kanbnrxjkxw2"]
+
+[ext_resource type="Script" uid="uid://d0on70qf7jdg8" path="res://world/adrenaline.gd" id="1_u4mxq"]
+[ext_resource type="AudioStream" uid="uid://dek6hgqu8gcvo" path="res://assets/audio/collect.mp3" id="3_qg38e"]
+[ext_resource type="PackedScene" uid="uid://cnvi4m6t81eyy" path="res://assets/models/items/pubg_mobile_adrenaline_syringe.glb" id="3_u4mxq"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ai45w"]
+height = 0.61065674
+
+[node name="Adrenaline" type="Area3D" unique_id=562960150]
+script = ExtResource("1_u4mxq")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1505417373]
+transform = Transform3D(0.54, 0, 0, 0, 0.54, 0, 0, 0, 0.54, 0, 0.21242121, 0)
+shape = SubResource("CylinderShape3D_ai45w")
+
+[node name="CollectSound" type="AudioStreamPlayer3D" parent="." unique_id=1628662423]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18243182, 0)
+stream = ExtResource("3_qg38e")
+
+[node name="Visual" parent="." unique_id=1935071234 instance=ExtResource("3_u4mxq")]
+transform = Transform3D(0.37147242, -0.4320639, 0.015133408, 0.030640408, 0.04621353, 0.5672966, -0.43124172, -0.36889708, 0.053343274, 0, 0, 0.065639734)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

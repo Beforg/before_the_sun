@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://b1phevm10e388"]
+
+[ext_resource type="Script" uid="uid://bl1rwti2436ee" path="res://world/gasoline_can.gd" id="1_ikawi"]
+[ext_resource type="PackedScene" uid="uid://cgjge2drk0sxj" path="res://assets/models/items/gasoline_can.glb" id="2_ikawi"]
+[ext_resource type="AudioStream" uid="uid://dek6hgqu8gcvo" path="res://assets/audio/collect.mp3" id="3_yb7no"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mmdvd"]
+
+[node name="GasolineCan" type="Area3D" unique_id=977605281]
+script = ExtResource("1_ikawi")
+
+[node name="Visual" parent="." unique_id=186430482 instance=ExtResource("2_ikawi")]
+transform = Transform3D(0.315, 0, 0, 0, 0.315, 0, 0, 0, 0.315, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2115882575]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05606556, -0.13778746, -0.2320466)
+shape = SubResource("BoxShape3D_mmdvd")
+
+[node name="CollectSound" type="AudioStreamPlayer3D" parent="." unique_id=616751275]
+stream = ExtResource("3_yb7no")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

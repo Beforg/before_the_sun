@@ -1,0 +1,111 @@
+[gd_scene format=3 uid="uid://0yylcrkforgl"]
+
+[ext_resource type="Script" uid="uid://v5n8uxll02p1" path="res://ui/hud.gd" id="1_rbyyf"]
+[ext_resource type="Shader" uid="uid://bg8ch5sa06e7i" path="res://ui/hud.gdshader" id="2_276te"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_546lt"]
+shader = ExtResource("2_276te")
+shader_parameter/terror_intensity = 0.0
+shader_parameter/base_color = Color(0.15, 0.02, 0.3, 1)
+shader_parameter/pulse_speed = 4.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_rbyyf"]
+
+[sub_resource type="SystemFont" id="SystemFont_276te"]
+font_names = PackedStringArray("Liberation Mono")
+
+[sub_resource type="LabelSettings" id="LabelSettings_546lt"]
+font = SubResource("SystemFont_276te")
+
+[node name="HUD" type="CanvasLayer" unique_id=1687985223]
+script = ExtResource("1_rbyyf")
+
+[node name="PanicVignette" type="ColorRect" parent="." unique_id=1290910334]
+material = SubResource("ShaderMaterial_546lt")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.54509807, 0, 0, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="PanicVignette" unique_id=1786271098]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanicVignette/MarginContainer" unique_id=218679287]
+layout_mode = 2
+
+[node name="GasLabel" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=2132973534]
+layout_mode = 2
+text = "Galões: 0/10"
+
+[node name="TerrorLabel" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=134851939]
+layout_mode = 2
+text = "Terror: 0%"
+
+[node name="TextTorchRefil" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=1581824768]
+layout_mode = 2
+text = "Bateria"
+
+[node name="Adrenalina" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=1948398836]
+layout_mode = 2
+text = "Adrenalina"
+
+[node name="TextCura" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=2028568859]
+layout_mode = 2
+text = "Terror: 0%"
+
+[node name="TextStatus" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=1592068086]
+layout_mode = 2
+text = "Galões: 0/10"
+
+[node name="TextAdrenalineTimer" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=1787123647]
+layout_mode = 2
+text = "Galões: 0/10"
+
+[node name="Dot" type="Label" parent="PanicVignette" unique_id=1611226656]
+modulate = Color(1, 1, 1, 0.4745098)
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2.5
+offset_top = -11.5
+offset_right = 2.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "."
+label_settings = SubResource("LabelSettings_rbyyf")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InteractionText" type="Label" parent="PanicVignette" unique_id=485918446]
+layout_mode = 0
+offset_left = 495.0
+offset_top = 521.0
+offset_right = 665.0
+offset_bottom = 547.0
+text = "Pressione [E] para ler"
+label_settings = SubResource("LabelSettings_546lt")
+
+[node name="InformativeText" type="Label" parent="PanicVignette" unique_id=1439083704]
+layout_mode = 0
+offset_left = 963.0
+offset_top = 195.0
+offset_right = 1138.0
+offset_bottom = 218.0
+text = "1 Adrenalina coletada."

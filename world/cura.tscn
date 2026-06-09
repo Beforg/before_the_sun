@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cj7p051n34je5"]
+
+[ext_resource type="Script" uid="uid://b2lkt41i0i37p" path="res://world/cura.gd" id="1_xe0vs"]
+[ext_resource type="AudioStream" uid="uid://dek6hgqu8gcvo" path="res://assets/audio/collect.mp3" id="3_7ph48"]
+[ext_resource type="PackedScene" uid="uid://x1wpsg8m306n" path="res://assets/models/items/pills.glb" id="3_xe0vs"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mad0u"]
+
+[node name="Cura" type="Area3D" unique_id=1751349162]
+script = ExtResource("1_xe0vs")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=43907475]
+shape = SubResource("BoxShape3D_mad0u")
+
+[node name="CollectSound" type="AudioStreamPlayer3D" parent="." unique_id=1128460129]
+stream = ExtResource("3_7ph48")
+
+[node name="Visual" parent="." unique_id=2082304859 instance=ExtResource("3_xe0vs")]
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

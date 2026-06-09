@@ -1,0 +1,96 @@
+[gd_scene format=3 uid="uid://bp2rvneeau6de"]
+
+[ext_resource type="Script" uid="uid://dugpnf4iw4mg2" path="res://entities/player.gd" id="1_merdl"]
+[ext_resource type="PackedScene" uid="uid://0yylcrkforgl" path="res://ui/hud.tscn" id="2_b0kkn"]
+[ext_resource type="AudioStream" uid="uid://dehedm8sat58e" path="res://assets/audio/Calm_hearbeat.wav" id="3_qly61"]
+[ext_resource type="AudioStream" uid="uid://buxi36esjpawq" path="res://assets/audio/Scared_heartbeat.wav" id="4_qsoyl"]
+[ext_resource type="PackedScene" uid="uid://c7kef5r3wu4he" path="res://assets/models/player/Untitled.glb" id="4_tjdhl"]
+[ext_resource type="AudioStream" uid="uid://betx124d7hpeq" path="res://assets/audio/lesiakower-pills-container-shake-455964.mp3" id="5_6nm46"]
+[ext_resource type="PackedScene" uid="uid://f475igo4626m" path="res://assets/models/player/flashlight.glb" id="5_x08pd"]
+[ext_resource type="PackedScene" uid="uid://4mu5pe2d6rxj" path="res://assets/models/hand.glb" id="6_6nm46"]
+[ext_resource type="PackedScene" uid="uid://cdk2py6ukymlf" path="res://assets/models/flashlight.glb" id="7_i623q"]
+[ext_resource type="AudioStream" uid="uid://c5l86fw1utf3q" path="res://assets/audio/walk.mp3" id="8_i623q"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tcf2h"]
+radius = 0.44726563
+height = 2.0472307
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qly61"]
+emission_shape = 3
+emission_box_extents = Vector3(5, 5, 5)
+gravity = Vector3(0, -0.02, 0)
+turbulence_enabled = true
+turbulence_noise_strength = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qsoyl"]
+albedo_color = Color(0.24840015, 0.24840018, 0.24840012, 1)
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_6nm46"]
+material = SubResource("StandardMaterial3D_qsoyl")
+size = Vector2(0.005, 0.005)
+
+[node name="Player" type="CharacterBody3D" unique_id=2087979505]
+script = ExtResource("1_merdl")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=411258123]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18566513, 0)
+shape = SubResource("CapsuleShape3D_tcf2h")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=312536554]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1167957, 0)
+
+[node name="Sketchfab_Scene" parent="Camera3D" unique_id=207798386 instance=ExtResource("6_6nm46")]
+transform = Transform3D(-0.3403072, -0.2604503, 0.035448693, -0.070574164, 0.1463972, 0.39810437, -0.2532, 0.30924672, -0.15860716, -0.095564574, -0.58302903, -0.86290616)
+visible = false
+
+[node name="Sketchfab_Scene2" parent="Camera3D" unique_id=1997558583 instance=ExtResource("7_i623q")]
+transform = Transform3D(0.039057422, 0.008621168, 0.0004394437, -1.7801563e-10, -0.0020362614, 0.039948132, 0.008632361, -0.039006785, -0.001988278, -0.03721273, -0.59725267, -1.0493293)
+visible = false
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Camera3D" unique_id=849943507]
+transform = Transform3D(0.99999005, -0.00027214407, 0.004459732, 0, 0.9981433, 0.06090921, -0.004468028, -0.060908604, 0.99813336, -0.16266952, -0.14676964, -0.78935206)
+light_color = Color(0.9644376, 0.98714256, 0.89471775, 1)
+light_energy = 7.0
+light_indirect_energy = 2.039
+light_volumetric_fog_energy = 3.228
+light_size = 0.495
+light_specular = 1.134
+shadow_enabled = true
+shadow_bias = 0.228
+shadow_normal_bias = 1.297
+spot_range = 15.0
+spot_angle = 38.42
+spot_angle_attenuation = 0.42044747
+
+[node name="Poeira" type="GPUParticles3D" parent="Camera3D" unique_id=574147393]
+amount = 350
+lifetime = 3.7
+process_material = SubResource("ParticleProcessMaterial_qly61")
+draw_pass_1 = SubResource("QuadMesh_6nm46")
+
+[node name="Hand" parent="Camera3D" unique_id=424483799 instance=ExtResource("4_tjdhl")]
+transform = Transform3D(-0.009641164, 0.0025983178, 0.0005446798, 0.0025863294, 0.00965566, -0.00028133314, -0.0005990232, -0.0001303656, -0.009981189, -0.03842005, -0.28081036, -0.1350298)
+
+[node name="Flashlight" parent="Camera3D/Hand" unique_id=292037427 instance=ExtResource("5_x08pd")]
+transform = Transform3D(17.98328, 244.24602, -290.55215, -56.26967, 289.37946, 239.77748, 375.38034, 31.677082, 49.862206, 16.800976, -8.456871, 27.052652)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Camera3D/Hand" unique_id=329005202]
+light_energy = 0.1
+omni_range = 1.0
+
+[node name="HUD" parent="." unique_id=1687985223 instance=ExtResource("2_b0kkn")]
+
+[node name="HeartbeatLow" type="AudioStreamPlayer" parent="." unique_id=1126102430]
+stream = ExtResource("3_qly61")
+volume_db = 12.772
+
+[node name="HeartbeatHight" type="AudioStreamPlayer" parent="." unique_id=2070160541]
+stream = ExtResource("4_qsoyl")
+volume_db = 4.561
+
+[node name="UseItem" type="AudioStreamPlayer" parent="." unique_id=184895196]
+stream = ExtResource("5_6nm46")
+
+[node name="SomPassos" type="AudioStreamPlayer" parent="." unique_id=890316585]
+stream = ExtResource("8_i623q")

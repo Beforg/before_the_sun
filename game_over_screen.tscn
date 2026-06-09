@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://civn1ul35a2ur"]
+
+[ext_resource type="Script" uid="uid://45dggumd7yka" path="res://game_over_screen.gd" id="1_gt22q"]
+[ext_resource type="AudioStream" uid="uid://bo2tbiii2lgjt" path="res://assets/audio/jump_scary.mp3" id="2_w3hxg"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_w3hxg"]
+font_size = 70
+font_color = Color(0.7057378, 0, 0.17462188, 1)
+
+[node name="GameOverScreen" type="Control" unique_id=1239803026]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gt22q")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=543959524]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0, 0, 0, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=622047835]
+
+[node name="Label" type="Label" parent="." unique_id=787634705]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+text = "MORTO"
+label_settings = SubResource("LabelSettings_w3hxg")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="." unique_id=212808963]
+stream = ExtResource("2_w3hxg")
+volume_db = -18.571
+autoplay = true
