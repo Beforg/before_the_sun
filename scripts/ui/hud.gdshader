@@ -4,7 +4,7 @@ shader_type canvas_item;
 uniform float terror_intensity : hint_range(0.0, 1.0) = 0.0;
 
 // A cor da distorção (configurado por padrão para um Índigo/Violeta profundo)
-uniform vec4 base_color : source_color = vec4(0.15, 0.02, 0.30, 1.0);
+uniform vec4 base_color : source_color = vec4(0.55, 0.05, 0.05, 1.0);
 
 // Velocidade da pulsação (simulando batimento cardíaco)
 uniform float pulse_speed = 4.0;
