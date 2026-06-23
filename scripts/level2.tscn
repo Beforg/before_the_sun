@@ -1,0 +1,355 @@
+[gd_scene format=3 uid="uid://c2wx1ai44kgyq"]
+
+[ext_resource type="PackedScene" uid="uid://bp2rvneeau6de" path="res://scripts/entities/player.tscn" id="1_6xmxd"]
+[ext_resource type="Script" uid="uid://y6j33v000aih" path="res://scripts/world.gd" id="1_ocfjn"]
+[ext_resource type="PackedScene" uid="uid://d1yplgh7ahajm" path="res://scripts/entities/enemy.tscn" id="3_srhoe"]
+[ext_resource type="PackedScene" path="res://scripts/flashlight_battery.tscn" id="5_ivsmw"]
+[ext_resource type="PackedScene" path="res://scripts/adrenaline.tscn" id="5_mad0u"]
+[ext_resource type="PackedScene" path="res://scripts/cura.tscn" id="7_0c2j3"]
+[ext_resource type="Script" uid="uid://ewg0oc5iu0x1" path="res://scripts/victory_point.gd" id="12_ocfjn"]
+[ext_resource type="AudioStream" uid="uid://doh6agr54ocla" path="res://assets/audio/horror-sound-4.mp3" id="13_b2suy"]
+[ext_resource type="AudioStream" uid="uid://bcru4pbvhb3bn" path="res://assets/audio/wind.mp3" id="13_ivsmw"]
+[ext_resource type="AudioStream" uid="uid://bx2yh4ju4avgt" path="res://assets/audio/eryliaa-night-forest-with-frogs-and-crickets-for-sleep-451153.mp3" id="13_v1iub"]
+[ext_resource type="PackedScene" uid="uid://cigamosben5ni" path="res://assets/test/clover_spring.glb" id="15_b2suy"]
+[ext_resource type="Terrain3DAssets" uid="uid://b2d0x618ye240" path="res://world/terrain/new_terrain_3d_assets.tres" id="15_h8lre"]
+[ext_resource type="Texture2D" uid="uid://bmjq6m4vqg53a" path="res://assets/models/abandoned_house_6.png" id="21_w12gl"]
+[ext_resource type="Script" uid="uid://bsd0qsefck7us" path="res://scripts/agua.gd" id="24_exsr7"]
+
+[sub_resource type="Gradient" id="Gradient_exsr7"]
+offsets = PackedFloat32Array(0.86440676, 1)
+colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_8dkbf"]
+frequency = 0.05
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0x6l5"]
+noise = SubResource("FastNoiseLite_8dkbf")
+color_ramp = SubResource("Gradient_exsr7")
+seamless = true
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_vjhti"]
+sky_top_color = Color(0.039215688, 0.05490196, 0.10980392, 1)
+sky_horizon_color = Color(0.063126765, 0.09575153, 0.15805238, 1)
+sky_cover = SubResource("NoiseTexture2D_0x6l5")
+ground_bottom_color = Color(0.03817046, 0.027750786, 0.01826752, 1)
+ground_horizon_color = Color(0.020545976, 0.02149145, 0.023459658, 1)
+
+[sub_resource type="Sky" id="Sky_ctwlg"]
+sky_material = SubResource("ProceduralSkyMaterial_vjhti")
+
+[sub_resource type="Environment" id="Environment_fn3g3"]
+background_mode = 2
+background_color = Color(0.019607844, 0.03137255, 0.078431375, 1)
+sky = SubResource("Sky_ctwlg")
+ambient_light_source = 2
+ambient_light_color = Color(0.019607844, 0.023529412, 0.10980392, 1)
+ambient_light_energy = 0.05
+tonemap_mode = 3
+fog_mode = 1
+fog_light_color = Color(0.18194956, 0.18201938, 0.25954002, 1)
+fog_light_energy = 0.79
+fog_density = 0.5065
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.15
+volumetric_fog_albedo = Color(0.06879827, 0.06879828, 0.06879828, 1)
+volumetric_fog_emission = Color(3.308989e-08, 0, 0.077462696, 1)
+volumetric_fog_length = 32.0
+volumetric_fog_sky_affect = 0.5
+adjustment_enabled = true
+adjustment_brightness = 1.23
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_b2suy"]
+size = Vector3(2.2641718, 0.7712097, 6.0387726)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_srhoe"]
+albedo_texture = ExtResource("21_w12gl")
+
+[sub_resource type="Shader" id="Shader_j34ew"]
+code = "// NOTE: Shader automatically converted from Godot Engine 4.6.2.stable's StandardMaterial3D.
+
+shader_type spatial;
+render_mode blend_mix, depth_draw_always, cull_back, diffuse_burley, specular_schlick_ggx;
+
+uniform vec4 albedo : source_color;
+uniform sampler2D texture_albedo : source_color, filter_linear_mipmap, repeat_enable;
+uniform ivec2 albedo_texture_size;
+uniform float point_size : hint_range(0.1, 128.0, 0.1);
+
+uniform float roughness : hint_range(0.0, 1.0);
+uniform sampler2D texture_metallic : hint_default_white, filter_linear_mipmap, repeat_enable;
+uniform vec4 metallic_texture_channel;
+uniform sampler2D texture_roughness : hint_roughness_r, filter_linear_mipmap, repeat_enable;
+
+uniform float specular : hint_range(0.0, 1.0, 0.01);
+uniform float metallic : hint_range(0.0, 1.0, 0.01);
+
+uniform sampler2D texture_refraction : filter_linear_mipmap, repeat_enable;
+uniform float refraction : hint_range(-1.0, 1.0, 0.001);
+uniform vec4 refraction_texture_channel;
+uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear_mipmap;
+uniform sampler2D depth_texture : hint_depth_texture, repeat_disable, filter_nearest;
+
+uniform sampler2D texture_normal : hint_roughness_normal, filter_linear_mipmap, repeat_enable;
+uniform float normal_scale : hint_range(-16.0, 16.0);
+varying vec3 uv1_triplanar_pos;
+
+uniform float uv1_blend_sharpness : hint_range(0.0, 150.0, 0.001);
+varying vec3 uv1_power_normal;
+
+uniform vec3 uv1_scale;
+uniform vec3 uv1_offset;
+uniform vec3 uv2_scale;
+uniform vec3 uv2_offset;
+
+void vertex() {
+	vec3 normal = MODEL_NORMAL_MATRIX * NORMAL;
+
+	TANGENT = vec3(0.0, 0.0, -1.0) * abs(normal.x);
+	TANGENT += vec3(1.0, 0.0, 0.0) * abs(normal.y);
+	TANGENT += vec3(1.0, 0.0, 0.0) * abs(normal.z);
+	TANGENT = inverse(MODEL_NORMAL_MATRIX) * normalize(TANGENT);
+
+	BINORMAL = vec3(0.0, 1.0, 0.0) * abs(normal.x);
+	BINORMAL += vec3(0.0, 0.0, -1.0) * abs(normal.y);
+	BINORMAL += vec3(0.0, 1.0, 0.0) * abs(normal.z);
+	BINORMAL = inverse(MODEL_NORMAL_MATRIX) * normalize(BINORMAL);
+
+	// UV1 Triplanar: Enabled (with World Triplanar)
+	uv1_power_normal = pow(abs(normal), vec3(uv1_blend_sharpness));
+	uv1_triplanar_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz * uv1_scale + uv1_offset + TIME*0.02;
+	uv1_power_normal /= dot(uv1_power_normal, vec3(1.0));
+	uv1_triplanar_pos *= vec3(1.0, -1.0, 1.0);
+}
+
+vec4 triplanar_texture(sampler2D p_sampler, vec3 p_weights, vec3 p_triplanar_pos) {
+	vec4 samp = vec4(0.0);
+	samp += texture(p_sampler, p_triplanar_pos.xy) * p_weights.z;
+	samp += texture(p_sampler, p_triplanar_pos.xz) * p_weights.y;
+	samp += texture(p_sampler, p_triplanar_pos.zy * vec2(-1.0, 1.0)) * p_weights.x;
+	return samp;
+}
+
+void fragment() {
+	vec4 albedo_tex = triplanar_texture(texture_albedo, uv1_power_normal, uv1_triplanar_pos);
+	ALBEDO = albedo.rgb * albedo_tex.rgb;
+
+	float metallic_tex = dot(triplanar_texture(texture_metallic, uv1_power_normal, uv1_triplanar_pos), metallic_texture_channel);
+	METALLIC = metallic_tex * metallic;
+	SPECULAR = specular;
+
+	vec4 roughness_texture_channel = vec4(1.0, 0.0, 0.0, 0.0);
+	float roughness_tex = dot(triplanar_texture(texture_roughness, uv1_power_normal, uv1_triplanar_pos), roughness_texture_channel);
+	ROUGHNESS = roughness_tex * roughness;
+
+	// Normal Map: Enabled
+	NORMAL_MAP = triplanar_texture(texture_normal, uv1_power_normal, uv1_triplanar_pos).rgb;
+	NORMAL_MAP_DEPTH = normal_scale;
+
+	// Refraction: Enabled (with normal map texture)
+	vec3 unpacked_normal = NORMAL_MAP;
+	unpacked_normal.xy = unpacked_normal.xy * 2.0 - 1.0;
+	unpacked_normal.z = sqrt(max(0.0, 1.0 - dot(unpacked_normal.xy, unpacked_normal.xy)));
+	vec3 ref_normal = normalize(mix(
+			NORMAL,
+			TANGENT * unpacked_normal.x + BINORMAL * unpacked_normal.y + NORMAL * unpacked_normal.z,
+			NORMAL_MAP_DEPTH));
+	vec2 ref_ofs = SCREEN_UV - ref_normal.xy * dot(triplanar_texture(texture_refraction, uv1_power_normal, uv1_triplanar_pos), refraction_texture_channel) * refraction;
+
+	float ref_amount = 1.0 - albedo.a * albedo_tex.a;
+
+	float refraction_depth_tex = textureLod(depth_texture, ref_ofs, 0.0).r;
+	vec4 ndc = OUTPUT_IS_SRGB ? vec4(vec3(SCREEN_UV, refraction_depth_tex) * 2.0 - 1.0, 1.0) : vec4(SCREEN_UV * 2.0 - 1.0, refraction_depth_tex, 1.0);
+	vec4 refraction_view_pos = INV_PROJECTION_MATRIX * ndc;
+	refraction_view_pos.xyz /= refraction_view_pos.w;
+
+	// If the depth buffer is lower then the model's Z position, use the refracted UV, otherwise use the normal screen UV.
+	// At low depth differences, decrease refraction intensity to avoid sudden discontinuities.
+	EMISSION += textureLod(screen_texture, mix(SCREEN_UV, ref_ofs, smoothstep(0.0, 1.0, VERTEX.z - refraction_view_pos.z)), ROUGHNESS * 8.0).rgb * ref_amount * EXPOSURE;
+	ALBEDO *= 1.0 - ref_amount;
+	// Force transparency on the material (required for refraction).
+	ALPHA = 1.0;
+}
+"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_j34ew"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_p2iis"]
+noise = SubResource("FastNoiseLite_j34ew")
+seamless = true
+as_normal_map = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_p2iis"]
+render_priority = 0
+shader = SubResource("Shader_j34ew")
+shader_parameter/albedo = Color(0.0002479215, 0.07262824, 0.34570152, 0.49803922)
+shader_parameter/albedo_texture_size = Vector2i(0, 0)
+shader_parameter/point_size = 1.0
+shader_parameter/roughness = 0.0
+shader_parameter/metallic_texture_channel = Vector4(1, 0, 0, 0)
+shader_parameter/specular = 0.5
+shader_parameter/metallic = 0.0
+shader_parameter/texture_refraction = SubResource("NoiseTexture2D_p2iis")
+shader_parameter/refraction = 0.05
+shader_parameter/refraction_texture_channel = Vector4(1, 0, 0, 0)
+shader_parameter/texture_normal = SubResource("NoiseTexture2D_p2iis")
+shader_parameter/normal_scale = 1.0
+shader_parameter/uv1_blend_sharpness = 1.8025
+shader_parameter/uv1_scale = Vector3(0.04, 0.04, 0.04)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)
+shader_parameter/uv2_scale = Vector3(1, 1, 1)
+shader_parameter/uv2_offset = Vector3(0, 0, 0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_o1net"]
+material = SubResource("ShaderMaterial_p2iis")
+size = Vector3(150, 10, 200)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2lfu3"]
+size = Vector3(44.413696, 5.4171753, 33.231934)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_b2suy"]
+vertices = PackedVector3Array(-127.5, 0.5, -127.5, -127.5, 0.5, 127.5, 127.5, 0.5, 127.5, 127.5, 0.5, -127.5, 8.490173, 1, -2.0202332, 5.503113, 0.5, -3.499031, 3.9862518, 0.5, 2.5172577, 12.978165, 0.5, -3.4940948, 9.992218, 1, -0.50242615, 14.498367, 0.5, 4.000992, 8.491287, 1, 2.5002136)
+polygons = [PackedInt32Array(2, 9, 3), PackedInt32Array(3, 5, 0), PackedInt32Array(0, 6, 1), PackedInt32Array(1, 9, 2), PackedInt32Array(9, 7, 3), PackedInt32Array(5, 6, 0), PackedInt32Array(3, 7, 5), PackedInt32Array(6, 9, 1), PackedInt32Array(9, 8, 7), PackedInt32Array(5, 4, 6), PackedInt32Array(7, 4, 5), PackedInt32Array(6, 10, 9), PackedInt32Array(8, 4, 7), PackedInt32Array(9, 10, 8), PackedInt32Array(4, 10, 6), PackedInt32Array(8, 10, 4)]
+geometry_parsed_geometry_type = 1
+
+[sub_resource type="Gradient" id="Gradient_dqqhb"]
+offsets = PackedFloat32Array(0.2, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_b2suy"]
+noise_type = 2
+frequency = 0.03
+cellular_jitter = 3.0
+cellular_return_type = 0
+domain_warp_enabled = true
+domain_warp_type = 1
+domain_warp_amplitude = 50.0
+domain_warp_fractal_type = 2
+domain_warp_fractal_lacunarity = 1.5
+domain_warp_fractal_gain = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_h8lre"]
+noise = SubResource("FastNoiseLite_b2suy")
+color_ramp = SubResource("Gradient_dqqhb")
+seamless = true
+
+[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_ysn08"]
+_shader_parameters = {
+&"bias_distance": 512.0,
+&"blend_sharpness": 0.87,
+&"depth_blur": 0.0,
+&"enable_macro_variation": true,
+&"enable_projection": true,
+&"flat_terrain_normals": null,
+&"macro_variation1": Color(1, 1, 1, 1),
+&"macro_variation2": Color(1, 1, 1, 1),
+&"macro_variation_slope": 0.333,
+&"mipmap_bias": 1.0,
+&"noise1_angle": 0.0,
+&"noise1_offset": Vector2(0.5, 0.5),
+&"noise1_scale": 0.04,
+&"noise2_scale": 0.076,
+&"noise_texture": SubResource("NoiseTexture2D_h8lre"),
+&"projection_threshold": 0.8
+}
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_dqqhb"]
+
+[node name="Level2" type="Node3D" unique_id=1507072864]
+script = ExtResource("1_ocfjn")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=308482707]
+environment = SubResource("Environment_fn3g3")
+
+[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="." unique_id=1950948657]
+transform = Transform3D(-0.98061126, -0.004052655, -0.19592126, 0.19596316, -0.020279724, -0.9804016, 0, -0.99978614, 0.020680698, -7.6293945e-06, 42.892162, 1.2639732)
+light_energy = 6.069
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1643046218]
+transform = Transform3D(0.5862416, -0.65684825, -0.47420585, -0.4062499, -0.74477804, 0.5294022, -0.700915, -0.117711514, -0.70346445, -75.63244, 46.885174, -90.14102)
+light_color = Color(0.6392157, 0.75686276, 1, 1)
+light_energy = 0.02
+light_indirect_energy = 1.11
+shadow_enabled = true
+
+[node name="Player" parent="." unique_id=2087979505 instance=ExtResource("1_6xmxd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.142899, 5.173292, 6.9806786)
+collision_layer = 3
+collision_mask = 13
+
+[node name="Enemy" parent="." unique_id=1094862579 node_paths=PackedStringArray("player") instance=ExtResource("3_srhoe")]
+transform = Transform3D(1.095, 0, 0, 0, 1.095, 0, 0, 0, 1.095, 76.59629, 1.9450479, 6.6732616)
+collision_layer = 4
+collision_mask = 3
+player = NodePath("../Player")
+
+[node name="Adrenaline" parent="." unique_id=562960150 instance=ExtResource("5_mad0u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.8455944, 1.9657066, 2.9355087)
+
+[node name="FlashlightBattery" parent="." unique_id=2083858076 instance=ExtResource("5_ivsmw")]
+transform = Transform3D(0.98100984, 0.18748179, -0.049700312, -0.18728924, 0.98226756, 0.00854513, 0.050421063, 0.00092547754, 0.9987276, 35.902363, 4.0495863, 38.260773)
+
+[node name="Cura" parent="." unique_id=1751349162 instance=ExtResource("7_0c2j3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4735785, 0.81690574, 4.185159)
+
+[node name="VictoryPoint" type="Area3D" parent="." unique_id=1108368906]
+transform = Transform3D(0.45627502, 0, -0.8898388, 0, 1, 0, 0.8898388, 0, 0.45627502, 55.45195, -0.78861165, 59.0583)
+script = ExtResource("12_ocfjn")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VictoryPoint" unique_id=421201148]
+transform = Transform3D(0.00181517, 0, 0.9999984, 0, 1, 0, -0.9999984, 0, 0.00181517, 1.3725967, 0.8096235, -1.4711971)
+shape = SubResource("BoxShape3D_b2suy")
+
+[node name="TerrorAmbience" type="AudioStreamPlayer" parent="." unique_id=158600204]
+stream = ExtResource("13_b2suy")
+volume_db = 1.825
+
+[node name="Ambient Sound" type="AudioStreamPlayer" parent="." unique_id=1071982538]
+stream = ExtResource("13_v1iub")
+volume_db = -12.772
+autoplay = true
+
+[node name="Ambient Sound2" type="AudioStreamPlayer" parent="." unique_id=2066753624]
+stream = ExtResource("13_ivsmw")
+volume_db = -8.211
+pitch_scale = 1.07
+autoplay = true
+
+[node name="FundoAgua" type="CSGBox3D" parent="." unique_id=18946880]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 101.18709, -11.167259, 148.36978)
+visible = false
+size = Vector3(214.81297, 1, 260.1216)
+material = SubResource("StandardMaterial3D_srhoe")
+
+[node name="Agua" type="MeshInstance3D" parent="." unique_id=739603859]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82.508934, -6.130031, 102.81739)
+visible = false
+mesh = SubResource("BoxMesh_o1net")
+script = ExtResource("24_exsr7")
+
+[node name="Area3D" type="Area3D" parent="Agua" unique_id=1631001350]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Agua/Area3D" unique_id=2011690951]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.554, 1.295855, -44.206787)
+shape = SubResource("BoxShape3D_2lfu3")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=840053117]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13728333, 3.8146973e-06, -0.0044403076)
+navigation_mesh = SubResource("NavigationMesh_b2suy")
+
+[node name="Terrain3D" type="Terrain3D" parent="NavigationRegion3D" unique_id=1040310965]
+data_directory = "res://world/terrain"
+material = SubResource("Terrain3DMaterial_ysn08")
+assets = ExtResource("15_h8lre")
+collision_mode = 4
+collision_shape_size = 64
+collision_radius = 80
+physics_material = SubResource("PhysicsMaterial_dqqhb")
+cast_shadows = 0
+top_level = true
+metadata/_edit_lock_ = true
+
+[node name="CloverSpring" parent="." unique_id=401152572 instance=ExtResource("15_b2suy")]
+transform = Transform3D(0.32999521, -0.0017405286, -0.00036706662, 0.0017405913, 0.32999542, 5.5314038e-05, 0.00036676973, -5.724946e-05, 0.3299998, 58.477493, -0.36506546, -4.7119837)
+
+[connection signal="body_entered" from="VictoryPoint" to="VictoryPoint" method="_on_body_entered"]
+[connection signal="body_entered" from="Agua/Area3D" to="Agua" method="_on_area_3d_body_entered"]
