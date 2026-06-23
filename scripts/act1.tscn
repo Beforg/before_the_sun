@@ -2,22 +2,17 @@
 
 [ext_resource type="PackedScene" uid="uid://bp2rvneeau6de" path="res://scripts/entities/player.tscn" id="1_6xmxd"]
 [ext_resource type="Script" uid="uid://y6j33v000aih" path="res://scripts/world.gd" id="1_ocfjn"]
-[ext_resource type="PackedScene" uid="uid://j8dfliampy6a" path="res://scripts/world_environment.tscn" id="2_mto8b"]
 [ext_resource type="PackedScene" uid="uid://d1yplgh7ahajm" path="res://scripts/entities/enemy.tscn" id="3_srhoe"]
-[ext_resource type="PackedScene" path="res://scripts/flashlight_battery.tscn" id="5_ivsmw"]
-[ext_resource type="PackedScene" path="res://scripts/adrenaline.tscn" id="5_mad0u"]
-[ext_resource type="PackedScene" path="res://scripts/cura.tscn" id="7_0c2j3"]
-[ext_resource type="Script" uid="uid://ewg0oc5iu0x1" path="res://scripts/victory_point.gd" id="12_ocfjn"]
+[ext_resource type="PackedScene" uid="uid://b026jqqodoqd6" path="res://scripts/flashlight_battery.tscn" id="5_ivsmw"]
+[ext_resource type="PackedScene" uid="uid://kanbnrxjkxw2" path="res://scripts/adrenaline.tscn" id="5_mad0u"]
+[ext_resource type="PackedScene" uid="uid://cj7p051n34je5" path="res://scripts/cura.tscn" id="7_0c2j3"]
 [ext_resource type="AudioStream" uid="uid://doh6agr54ocla" path="res://assets/audio/horror-sound-4.mp3" id="13_b2suy"]
 [ext_resource type="AudioStream" uid="uid://bcru4pbvhb3bn" path="res://assets/audio/wind.mp3" id="13_ivsmw"]
 [ext_resource type="AudioStream" uid="uid://bx2yh4ju4avgt" path="res://assets/audio/eryliaa-night-forest-with-frogs-and-crickets-for-sleep-451153.mp3" id="13_v1iub"]
-[ext_resource type="PackedScene" uid="uid://cigamosben5ni" path="res://assets/test/clover_spring.glb" id="15_b2suy"]
+[ext_resource type="PackedScene" uid="uid://cigamosben5ni" path="res://assets/assets/test/clover_spring.glb" id="15_b2suy"]
 [ext_resource type="Terrain3DAssets" uid="uid://b2d0x618ye240" path="res://world/terrain/new_terrain_3d_assets.tres" id="15_h8lre"]
-[ext_resource type="Texture2D" uid="uid://bmjq6m4vqg53a" path="res://assets/models/abandoned_house_6.png" id="21_w12gl"]
+[ext_resource type="Texture2D" uid="uid://38npqow07n3g" path="res://assets/abandoned_house_6.png" id="21_w12gl"]
 [ext_resource type="Script" uid="uid://bsd0qsefck7us" path="res://scripts/agua.gd" id="24_exsr7"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_b2suy"]
-size = Vector3(2.2641718, 0.7712097, 6.0387726)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_srhoe"]
 albedo_texture = ExtResource("21_w12gl")
@@ -215,15 +210,12 @@ _shader_parameters = {
 [node name="act1" type="Node3D" unique_id=1507072864]
 script = ExtResource("1_ocfjn")
 
-[node name="WorldEnvironment" parent="." unique_id=308482707 instance=ExtResource("2_mto8b")]
-
 [node name="DirectionalLight3D2" type="DirectionalLight3D" parent="." unique_id=1950948657]
 transform = Transform3D(-0.98061126, -0.004052655, -0.19592126, 0.19596316, -0.020279724, -0.9804016, 0, -0.99978614, 0.020680698, -7.6293945e-06, 42.892162, 1.2639732)
 light_energy = 6.069
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1643046218]
 transform = Transform3D(0.5862416, -0.65684825, -0.47420585, -0.4062499, -0.74477804, 0.5294022, -0.700915, -0.117711514, -0.70346445, -75.63244, 46.885174, -90.14102)
-visible = false
 light_color = Color(0.6392157, 0.75686276, 1, 1)
 light_energy = 0.02
 light_indirect_energy = 1.11
@@ -248,14 +240,6 @@ transform = Transform3D(0.98100984, 0.18748179, -0.049700312, -0.18728924, 0.982
 
 [node name="Cura" parent="." unique_id=1751349162 instance=ExtResource("7_0c2j3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4735785, 0.81690574, 4.185159)
-
-[node name="VictoryPoint" type="Area3D" parent="." unique_id=1108368906]
-transform = Transform3D(0.45627502, 0, -0.8898388, 0, 1, 0, 0.8898388, 0, 0.45627502, 55.45195, -0.78861165, 59.0583)
-script = ExtResource("12_ocfjn")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="VictoryPoint" unique_id=421201148]
-transform = Transform3D(0.00181517, 0, 0.9999984, 0, 1, 0, -0.9999984, 0, 0.00181517, 1.3725967, 0.8096235, -1.4711971)
-shape = SubResource("BoxShape3D_b2suy")
 
 [node name="TerrorAmbience" type="AudioStreamPlayer" parent="." unique_id=158600204]
 stream = ExtResource("13_b2suy")
@@ -308,5 +292,4 @@ metadata/_edit_lock_ = true
 [node name="CloverSpring" parent="." unique_id=401152572 instance=ExtResource("15_b2suy")]
 transform = Transform3D(0.32999521, -0.0017405286, -0.00036706662, 0.0017405913, 0.32999542, 5.5314038e-05, 0.00036676973, -5.724946e-05, 0.3299998, 58.477493, -0.36506546, -4.7119837)
 
-[connection signal="body_entered" from="VictoryPoint" to="VictoryPoint" method="_on_body_entered"]
 [connection signal="body_entered" from="Agua/Area3D" to="Agua" method="_on_area_3d_body_entered"]
