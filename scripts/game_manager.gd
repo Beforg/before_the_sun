@@ -17,7 +17,10 @@ const MAX_TERROR: float = 100.0
 var is_addicted: bool = false
 var adrenaline_time_left: float = 0.0
 var is_adrenaline_active: bool = false
-var adrenaline_use_history: Array = [] 
+var adrenaline_use_history: Array = []
+
+# itens chave:
+var has_gate_key: bool = false;
 
 func collect_gasoline(): 
 	gasoline_count += 1

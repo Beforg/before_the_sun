@@ -1,20 +1,25 @@
-extends Area3D
+extends CollisionObject3D # Funciona tanto para Area3D quanto para StaticBody3D
 
-@onready var visual = $Visual
-@onready var audio = $CollectSound
-@onready var collision = $CollisionShape3D
+@export var item_name: String = "Cura"
+@export var outline_material: Material # Arraste aquele material "outline_mat.tres" para cá no Inspector!
+@onready var mesh = $Visual/Object_2 # Certifique-se de que o nome da sua malha 3D está correto
 
-func _on_body_entered(body: Node3D) -> void:
-	# Verifica se quem esbarrou foi o Player
-	if body.name == "Player":
-		
+func highlight() -> void:
+	# Aplica a borda brilhante por cima do material original
+	if mesh and outline_material:
+		mesh.material_overlay = outline_material
+
+func unhighlight() -> void:
+	# Remove a borda quando o jogador desvia o olhar
+	if mesh:
+		mesh.material_overlay = null
+
+func interact() -> void:
+	print("Coletou: ", item_name)
+	
+	# Aqui você colocará os ifs do GameManager no futuro
+	if item_name == "Cura":
 		GameManager.collect_gasoline()
-		print("Pegou Gasolina! Total: ", GameManager.gasoline_count)
-		
-		audio.play()
-		
-		visual.visible = false
-		collision.set_deferred("disabled", true)
-		
-		await audio.finished
-		queue_free()
+	
+	# Destrói o item após coletar
+	queue_free()

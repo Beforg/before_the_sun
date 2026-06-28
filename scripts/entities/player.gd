@@ -4,7 +4,8 @@ extends CharacterBody3D
 @export var mouse_sensitivity: float = 0.003
 @onready var camera = $Camera3D
 @onready var hand = $Camera3D/Hand
-
+@onready var interact_ray = $Camera3D/InteractRay
+var current_interactable: Node3D = null
 # -- Configurações de Câmera (Smoothing) --
 var camera_smoothing := 13.0 # Menor = câmera mais "pesada/arrastada"
 var target_cam_rotation := Vector2.ZERO 
@@ -40,10 +41,14 @@ func _ready() -> void:
 	target_cam_rotation.x = camera.rotation.x
 	base_camera_pos = camera.position 
 	GameManager.difficulty_increased.connect(_on_difficulty_increased)
+	interact_ray.add_exception(self)
 
 func _input(event: InputEvent) -> void:
 	var item_sound = $UseItem
 	
+	if event.is_action_pressed("interagir"):
+		if current_interactable:
+			current_interactable.interact()
 	# CORRIGIDO: Removido o segundo bloco que rotacionava o player instantaneamente
 	if event is InputEventMouseMotion:
 		mouse_delta = event.relative
@@ -82,7 +87,7 @@ func _input(event: InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	_update_heartbeat_audio()
-	
+	_check_interaction()
 	# --- 1. GESTÃO DE VELOCIDADE E ESTADOS ---
 	if GameManager.is_adrenaline_active:
 		if GameManager.is_addicted:
@@ -200,3 +205,22 @@ func tocar_passo() -> void:
 	som_passos.pitch_scale = randf_range(0.85, 1.15)
 	som_passos.volume_db = randf_range(-5.0, 0.0)
 	som_passos.play()
+
+func _check_interaction() -> void:
+	interact_ray.force_raycast_update()
+	if interact_ray.is_colliding():
+		var hit = interact_ray.get_collider()
+		# Se o laser bateu em algo novo e que possui a função "interact"
+		if hit != current_interactable and hit.has_method("interact"):
+			print("Colidindo com item!!")
+			if current_interactable:
+				current_interactable.unhighlight() # Tira o brilho do antigo
+				
+			current_interactable = hit
+			current_interactable.highlight() # Bota brilho no novo
+			
+	else:
+		# Se o laser não está encostando em nada, remove o brilho do que estava olhando
+		if current_interactable:
+			current_interactable.unhighlight()
+			current_interactable = null
