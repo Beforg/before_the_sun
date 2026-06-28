@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://cvxjt7kntg8dh"]
+
+[ext_resource type="Shader" uid="uid://hjo8mojvwmep" path="res://scripts/pine_tree.gdshader" id="1_88fp0"]
+[ext_resource type="Texture2D" uid="uid://bcoip4cfk3gdp" path="res://assets/test/pine_tree_0.png" id="2_rqd7d"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_88fp0")
+shader_parameter/texture_albedo = ExtResource("2_rqd7d")
+shader_parameter/alpha_scissor = 0.5930000281675
+shader_parameter/wind_speed = 1.5550000000000002
+shader_parameter/wind_strength = 0.48
+shader_parameter/wind_noise = 2.0

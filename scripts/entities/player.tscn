@@ -15,6 +15,10 @@
 radius = 0.44726563
 height = 2.0472307
 
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_t7oqv"]
+dof_blur_far_enabled = true
+dof_blur_far_distance = 15.0
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qly61"]
 emission_shape = 3
 emission_box_extents = Vector3(5, 5, 5)
@@ -39,6 +43,7 @@ shape = SubResource("CapsuleShape3D_tcf2h")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=312536554]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5086211, 0)
+attributes = SubResource("CameraAttributesPractical_t7oqv")
 
 [node name="Sketchfab_Scene" parent="Camera3D" unique_id=207798386 instance=ExtResource("6_6nm46")]
 transform = Transform3D(-0.3403072, -0.2604503, 0.035448693, -0.070574164, 0.1463972, 0.39810437, -0.2532, 0.30924672, -0.15860716, -0.095564574, -0.58302903, -0.86290616)
@@ -59,7 +64,7 @@ light_specular = 1.134
 shadow_enabled = true
 shadow_bias = 0.228
 shadow_normal_bias = 1.297
-spot_range = 15.0
+spot_range = 25.0
 spot_angle = 38.42
 spot_angle_attenuation = 0.42044747
 
@@ -78,6 +83,11 @@ transform = Transform3D(17.98328, 244.24602, -290.55215, -56.26967, 289.37946, 2
 [node name="OmniLight3D" type="OmniLight3D" parent="Camera3D/Hand" unique_id=329005202]
 light_energy = 0.1
 omni_range = 1.0
+
+[node name="InteractRay" type="RayCast3D" parent="Camera3D" unique_id=1031924044]
+target_position = Vector3(0, 0, -2.5)
+collision_mask = 2
+collide_with_areas = true
 
 [node name="HUD" parent="." unique_id=1687985223 instance=ExtResource("2_b0kkn")]
 
