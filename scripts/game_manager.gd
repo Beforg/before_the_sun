@@ -18,6 +18,7 @@ var is_addicted: bool = false
 var adrenaline_time_left: float = 0.0
 var is_adrenaline_active: bool = false
 var adrenaline_use_history: Array = []
+var adrenaline_upgrade_level: int = 0
 
 # itens chave:
 var has_gate_key: bool = false;
@@ -29,6 +30,8 @@ func collect_dollar(amount: int): dollars += amount
 func collect_adrenaline(): adrenaline_count += 1
 func collect_torch_refill(): torch_refills += 1
 func collect_cure(): cures_count += 1
+
+
 
 func _check_difficulty_milestones():
 	match gasoline_count:
@@ -53,12 +56,13 @@ func try_use_adrenaline() -> bool:
 		
 		_check_addiction()
 		
-		# --- A PARTE QUE FALTAVA ---
 		is_adrenaline_active = true
-		if is_addicted:
-			adrenaline_time_left = 7.5
-		else:
-			adrenaline_time_left = 10.0
+		
+		# Define o tempo base
+		var base_time = 7.5 if is_addicted else 10.0
+		
+		# EFEITO DO UPGRADE: Adiciona +3.5 segundos de efeito por nível de upgrade
+		adrenaline_time_left = base_time + (adrenaline_upgrade_level * 3.5)
 			
 		return true 
 	return false
@@ -107,3 +111,23 @@ func _process(delta: float) -> void:
 func increase_terror(amount: float):
 	terror_level += amount
 	terror_level = clamp(terror_level, 0.0, MAX_TERROR)
+
+func upgrade_adrenaline() -> void:
+	adrenaline_upgrade_level += 1
+	print("Adrenalina Aprimorada! Nível: ", adrenaline_upgrade_level)
+	
+var max_inventory_slots: int = 6
+
+# Retorna quantos itens ocupam espaço na mochila no total
+func get_used_slots() -> int:
+	# Como combinado, apenas Baterias, Curas e Adrenalina pesam na mochila
+	return torch_refills + cures_count + adrenaline_count
+
+# Verifica se o jogador pode pegar um item novo
+func has_free_space() -> bool:
+	return get_used_slots() < max_inventory_slots
+
+# Função para quando ele achar uma "Mochila Maior" no mapa
+func upgrade_inventory() -> void:
+	max_inventory_slots += 2
+	print("Inventário expandido! Capacidade atual: ", max_inventory_slots)

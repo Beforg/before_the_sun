@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://degc2ta6bhphu"]
+
+[ext_resource type="Script" uid="uid://bb6anhav5v2fu" path="res://scripts/group.gd" id="1_1jv1l"]
+[ext_resource type="PackedScene" uid="uid://754ahq6xfeem" path="res://scripts/cura.tscn" id="2_8ajkl"]
+[ext_resource type="PackedScene" uid="uid://bolvlj1l6bawm" path="res://assets/models/crates/ind_wooden_crates_04_tarp.tscn" id="3_3qtrp"]
+[ext_resource type="PackedScene" uid="uid://dlb2dwc3m11mf" path="res://assets/models/crates/ind_metal_crate_01.tscn" id="4_5encb"]
+[ext_resource type="PackedScene" uid="uid://dwaj0rph4qf21" path="res://scripts/flashlight_battery.tscn" id="5_hfuhp"]
+[ext_resource type="PackedScene" uid="uid://c7okxsg5a0vti" path="res://scripts/adrenaline.tscn" id="6_nkyks"]
+
+[node name="ItemPoint12" type="Node3D" unique_id=77179190 node_paths=PackedStringArray("player")]
+transform = Transform3D(0.37475216, 0, 0.927125, 0, 1, 0, -0.927125, 0, 0.37475216, 0, 0, 0)
+script = ExtResource("1_1jv1l")
+player = NodePath("")
+
+[node name="Cura" parent="." unique_id=1751349162 instance=ExtResource("2_8ajkl")]
+transform = Transform3D(0.55094695, 0, 0.83454025, 0, 1, 0, -0.83454025, 0, 0.55094695, -4.9084473, 0.8406099, -4.9201508)
+
+[node name="ind_wooden_crates_04_tarp" parent="." unique_id=650894435 instance=ExtResource("3_3qtrp")]
+transform = Transform3D(0.008465278, 7.97278e-19, -0.0053234436, 1.2246467e-18, 0.01, 3.4450925e-18, 0.0053234436, -3.568301e-18, 0.008465278, -3.8561058, 3.330669e-16, -8.529449)
+
+[node name="ind_metal_crate_01" parent="." unique_id=1847773060 instance=ExtResource("4_5encb")]
+transform = Transform3D(0.008843122, -1.0367175e-18, -0.0046689603, 0, 0.01, -2.220446e-18, 0.0046689603, 1.9635675e-18, 0.008843122, -5.5526733, -2.7755576e-16, -6.0059204)
+
+[node name="FlashlightBattery" parent="." unique_id=2083858076 instance=ExtResource("5_hfuhp")]
+transform = Transform3D(0.5875027, 0.07352295, 0.80587494, -0.1319249, 0.9912433, 0.005741723, -0.79839563, -0.10968809, 0.5920576, -5.5404053, 0.84606326, -5.2746735)
+
+[node name="Adrenaline" parent="." unique_id=562960150 instance=ExtResource("6_nkyks")]
+transform = Transform3D(0.55094695, 0, 0.83454025, 0, 1, 0, -0.83454025, 0, 0.55094695, -4.4019775, 0.84540474, -4.809784)

@@ -51,10 +51,12 @@ func _input(event: InputEvent) -> void:
 			current_interactable.interact()
 	# CORRIGIDO: Removido o segundo bloco que rotacionava o player instantaneamente
 	if event is InputEventMouseMotion:
-		mouse_delta = event.relative
-		target_cam_rotation.y -= event.relative.x * mouse_sensitivity
-		target_cam_rotation.x -= event.relative.y * mouse_sensitivity
-		target_cam_rotation.x = clamp(target_cam_rotation.x, deg_to_rad(-80), deg_to_rad(80))
+		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+			mouse_delta = event.relative
+			target_cam_rotation.y -= event.relative.x * mouse_sensitivity
+			target_cam_rotation.x -= event.relative.y * mouse_sensitivity
+			target_cam_rotation.x = clamp(target_cam_rotation.x, deg_to_rad(-80), deg_to_rad(80))
+		
 		
 	if event.is_action_pressed("usar_cura"):
 		if GameManager.cures_count > 0:

@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://4mu5pe2d6rxj" path="res://assets/models/hand.glb" id="6_6nm46"]
 [ext_resource type="PackedScene" uid="uid://cdk2py6ukymlf" path="res://assets/models/flashlight.glb" id="7_i623q"]
 [ext_resource type="AudioStream" uid="uid://c5l86fw1utf3q" path="res://assets/audio/walk.mp3" id="8_i623q"]
+[ext_resource type="PackedScene" uid="uid://3lk5xnoa6btv" path="res://inventarioui.tscn" id="11_7vdsa"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tcf2h"]
 radius = 0.44726563
@@ -104,3 +105,5 @@ stream = ExtResource("5_6nm46")
 
 [node name="SomPassos" type="AudioStreamPlayer" parent="." unique_id=890316585]
 stream = ExtResource("8_i623q")
+
+[node name="CanvasLayer" parent="." unique_id=930240575 instance=ExtResource("11_7vdsa")]
