@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://qltbc0dkkdlf"]
+
+[ext_resource type="PackedScene" uid="uid://fgdilmerigg5" path="res://assets/models/ups/raider_backpack.glb" id="1_6po06"]
+
+[node name="InventarioUp" type="Node3D" unique_id=1886271770]
+
+[node name="Sketchfab_Scene" parent="." unique_id=781642829 instance=ExtResource("1_6po06")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.46324986, 0)

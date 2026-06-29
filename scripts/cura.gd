@@ -18,8 +18,7 @@ func interact() -> void:
 	print("Coletou: ", item_name)
 	
 	# Aqui você colocará os ifs do GameManager no futuro
-	if item_name == "Cura":
+	if item_name == "Cura" && GameManager.has_free_space():
 		GameManager.collect_cure()
-	
+		queue_free()
 	# Destrói o item após coletar
-	queue_free()

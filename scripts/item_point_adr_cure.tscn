@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://8ja7m0lwunha"]
+
+[ext_resource type="Script" uid="uid://bb6anhav5v2fu" path="res://scripts/group.gd" id="1_2b7ho"]
+[ext_resource type="PackedScene" uid="uid://bolvlj1l6bawm" path="res://assets/models/crates/ind_wooden_crates_04_tarp.tscn" id="2_bs276"]
+[ext_resource type="PackedScene" uid="uid://dlb2dwc3m11mf" path="res://assets/models/crates/ind_metal_crate_01.tscn" id="3_rmraw"]
+[ext_resource type="PackedScene" uid="uid://c7okxsg5a0vti" path="res://scripts/adrenaline.tscn" id="4_h73hl"]
+[ext_resource type="PackedScene" uid="uid://754ahq6xfeem" path="res://scripts/cura.tscn" id="5_mxf1w"]
+
+[node name="ItemPoint9" type="Node3D" unique_id=1085813571 node_paths=PackedStringArray("player")]
+transform = Transform3D(0.99582887, 0, 0.09124097, 0, 1, 0, -0.09124097, 0, 0.99582887, 0, 0, 0)
+script = ExtResource("1_2b7ho")
+player = NodePath("")
+
+[node name="ind_wooden_crates_04_tarp" parent="." unique_id=650894435 instance=ExtResource("2_bs276")]
+transform = Transform3D(0.008465278, 7.97278e-19, -0.0053234436, 1.2246467e-18, 0.01, 3.4450925e-18, 0.0053234436, -3.568301e-18, 0.008465278, -3.8561058, 3.330669e-16, -8.529449)
+
+[node name="ind_metal_crate_01" parent="." unique_id=1847773060 instance=ExtResource("3_rmraw")]
+transform = Transform3D(0.008843122, -1.0367175e-18, -0.0046689603, 0, 0.01, -2.220446e-18, 0.0046689603, 1.9635675e-18, 0.008843122, -5.5526733, -2.7755576e-16, -6.0059204)
+
+[node name="Adrenaline" parent="." unique_id=562960150 instance=ExtResource("4_h73hl")]
+transform = Transform3D(0.55094695, 0, 0.83454025, 0, 1, 0, -0.83454025, 0, 0.55094695, -4.4019775, 0.84540474, -4.809784)
+
+[node name="Cura" parent="." unique_id=1751349162 instance=ExtResource("5_mxf1w")]
+transform = Transform3D(0.55094695, 0, 0.83454025, 0, 1, 0, -0.83454025, 0, 0.55094695, -5.4577637, 0.8406099, -5.2828064)

@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://3lk5xnoa6btv"]
+
+[ext_resource type="Script" uid="uid://dt1qwja3k6k7c" path="res://inventarioui.gd" id="1_bg7d0"]
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=930240575]
+visible = false
+script = ExtResource("1_bg7d0")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1291658446]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.26666668)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorRect" unique_id=1603132437]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -410.5
+offset_top = -175.0
+offset_right = 410.5
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Label" type="Label" parent="ColorRect/VBoxContainer" unique_id=537370655]
+layout_mode = 2
+text = "Inventario"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ColorRect/VBoxContainer" unique_id=686759042]
+custom_minimum_size = Vector2(0, -0.32)
+layout_mode = 2
+alignment = 1
+
+[node name="Label2" type="Label" parent="ColorRect/VBoxContainer/HBoxContainer" unique_id=723608165]
+layout_mode = 2
+text = "ItensChave"
+horizontal_alignment = 2
+
+[node name="Label" type="Label" parent="ColorRect/VBoxContainer/HBoxContainer" unique_id=815697264]
+layout_mode = 2
+text = "Itens"
+horizontal_alignment = 2
+
+[node name="GridItens" type="GridContainer" parent="ColorRect/VBoxContainer" unique_id=1983644111]
+layout_mode = 2
+columns = 6
+
+[node name="GridChaves" type="GridContainer" parent="ColorRect/VBoxContainer" unique_id=555942462]
+layout_mode = 2
