@@ -20,6 +20,8 @@ func interact() -> void:
 	# Aqui você colocará os ifs do GameManager no futuro
 	if item_name == "Chave do Portao":
 		GameManager.has_gate_key = true
-	
+	elif item_name == "p1_act1":
+		GameManager.has_gate_key = true # trocar dps
+		
 	# Destrói o item após coletar
 	queue_free()
