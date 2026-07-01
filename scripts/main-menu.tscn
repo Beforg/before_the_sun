@@ -1,7 +1,17 @@
 [gd_scene format=3 uid="uid://jbchtg2nic4y"]
 
-[ext_resource type="Script" uid="uid://cbtwnghbq8ni2" path="res://main_menu.gd" id="1_gvk52"]
-[ext_resource type="Texture2D" uid="uid://b7vcy56204she" path="res://assets/logo.png" id="2_j3jwc"]
+[ext_resource type="Script" uid="uid://cbtwnghbq8ni2" path="res://scripts/main_menu.gd" id="1_gvk52"]
+
+[sub_resource type="SystemFont" id="SystemFont_au8hk"]
+font_names = PackedStringArray("Fantasy")
+font_weight = 999
+font_stretch = 200
+msdf_size = 90
+
+[sub_resource type="LabelSettings" id="LabelSettings_d5hc8"]
+font = SubResource("SystemFont_au8hk")
+font_size = 65
+font_color = Color(1, 0, 0, 1)
 
 [node name="Menu" type="Control" unique_id=1978130722]
 layout_mode = 3
@@ -20,15 +30,6 @@ offset_right = 1194.0
 offset_bottom = 702.0
 color = Color(0, 0, 0, 1)
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=1588184428]
-layout_mode = 0
-offset_left = 412.0
-offset_top = -2.0
-offset_right = 1948.0
-offset_bottom = 1022.0
-scale = Vector2(0.265, 0.265)
-texture = ExtResource("2_j3jwc")
-
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2064087475]
 layout_mode = 0
 offset_left = 147.0
@@ -45,6 +46,17 @@ text = "Jogar
 layout_mode = 2
 text = "Sair
 "
+
+[node name="Label" type="Label" parent="." unique_id=329570847]
+layout_mode = 0
+offset_left = 149.0
+offset_top = 27.0
+offset_right = 991.0
+offset_bottom = 228.0
+text = "Before The Sun"
+label_settings = SubResource("LabelSettings_d5hc8")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="pressed" from="VBoxContainer/Jogar" to="." method="_on_jogar_pressed"]
 [connection signal="pressed" from="VBoxContainer/Sair" to="." method="_on_sair_pressed"]

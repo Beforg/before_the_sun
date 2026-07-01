@@ -5,7 +5,7 @@ signal difficulty_increased(level)
 signal spawn_second_monster 
 
 # Variáveis básicas
-var gasoline_count: int = 0
+var gasoline_count: int = 10
 var dollars: int = 0
 var adrenaline_count: int = 0
 var torch_refills: int = 0

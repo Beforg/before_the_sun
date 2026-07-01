@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://dt1qwja3k6k7c" path="res://inventarioui.gd" id="1_bg7d0"]
 
 [node name="CanvasLayer" type="CanvasLayer" unique_id=930240575]
-visible = false
 script = ExtResource("1_bg7d0")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1291658446]
@@ -37,19 +36,19 @@ custom_minimum_size = Vector2(0, -0.32)
 layout_mode = 2
 alignment = 1
 
-[node name="Label2" type="Label" parent="ColorRect/VBoxContainer/HBoxContainer" unique_id=723608165]
+[node name="Label2" type="Label" parent="ColorRect/VBoxContainer" unique_id=723608165]
 layout_mode = 2
 text = "ItensChave"
-horizontal_alignment = 2
-
-[node name="Label" type="Label" parent="ColorRect/VBoxContainer/HBoxContainer" unique_id=815697264]
-layout_mode = 2
-text = "Itens"
-horizontal_alignment = 2
+horizontal_alignment = 1
 
 [node name="GridItens" type="GridContainer" parent="ColorRect/VBoxContainer" unique_id=1983644111]
 layout_mode = 2
-columns = 6
+columns = 5
+
+[node name="Label3" type="Label" parent="ColorRect/VBoxContainer" unique_id=815697264]
+layout_mode = 2
+text = "Itens"
+horizontal_alignment = 1
 
 [node name="GridChaves" type="GridContainer" parent="ColorRect/VBoxContainer" unique_id=555942462]
 layout_mode = 2
