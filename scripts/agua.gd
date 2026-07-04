@@ -7,4 +7,4 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 	if body.name == "Player":
 		print("O jogador morreu afogado!")
 		GameManager.reset_game()
-		get_tree().change_scene_to_file("res://game_over_screen.tscn")
+		get_tree().change_scene_to_file("res://scripts/game_over_screen.gd")

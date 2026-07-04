@@ -20,35 +20,45 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -410.5
-offset_top = -175.0
-offset_right = 410.5
+offset_left = -410.0
+offset_top = -264.0
+offset_right = 411.0
+offset_bottom = -89.0
 grow_horizontal = 2
 grow_vertical = 0
+alignment = 1
 
 [node name="Label" type="Label" parent="ColorRect/VBoxContainer" unique_id=537370655]
 layout_mode = 2
 text = "Inventario"
-horizontal_alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ColorRect/VBoxContainer" unique_id=686759042]
 custom_minimum_size = Vector2(0, -0.32)
 layout_mode = 2
 alignment = 1
 
-[node name="Label2" type="Label" parent="ColorRect/VBoxContainer" unique_id=723608165]
-layout_mode = 2
-text = "ItensChave"
-horizontal_alignment = 1
-
-[node name="GridItens" type="GridContainer" parent="ColorRect/VBoxContainer" unique_id=1983644111]
-layout_mode = 2
-columns = 5
-
 [node name="Label3" type="Label" parent="ColorRect/VBoxContainer" unique_id=815697264]
 layout_mode = 2
 text = "Itens"
 horizontal_alignment = 1
 
+[node name="GridItens" type="GridContainer" parent="ColorRect/VBoxContainer" unique_id=1983644111]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 3
+
+[node name="Label2" type="Label" parent="ColorRect/VBoxContainer" unique_id=723608165]
+layout_mode = 2
+text = "ItensChave"
+horizontal_alignment = 1
+
 [node name="GridChaves" type="GridContainer" parent="ColorRect/VBoxContainer" unique_id=555942462]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2

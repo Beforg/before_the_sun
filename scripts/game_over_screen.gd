@@ -10,4 +10,4 @@ func _ready() -> void:
 	await get_tree().create_timer(4.0).timeout
 	
 	# Volta para a tela inicial do jogo
-	get_tree().change_scene_to_file("res://main-menu.tscn")
+	get_tree().change_scene_to_file("res://scripts/main-menu.tscn")

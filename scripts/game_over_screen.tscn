@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://civn1ul35a2ur"]
 
-[ext_resource type="Script" uid="uid://45dggumd7yka" path="res://game_over_screen.gd" id="1_gt22q"]
+[ext_resource type="Script" uid="uid://45dggumd7yka" path="res://scripts/game_over_screen.gd" id="1_gt22q"]
 [ext_resource type="AudioStream" uid="uid://bo2tbiii2lgjt" path="res://assets/audio/jump_scary.mp3" id="2_w3hxg"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_w3hxg"]

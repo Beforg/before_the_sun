@@ -4,8 +4,6 @@
 [ext_resource type="AudioStream" uid="uid://dek6hgqu8gcvo" path="res://assets/audio/collect.mp3" id="2_6uj15"]
 [ext_resource type="Material" uid="uid://ifs7godbs2rq" path="res://assets/models/items/outline_mat_collectible_bateria.tres" id="2_xbqq1"]
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_xbqq1"]
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vowls"]
 resource_name = "material"
 cull_mode = 2
@@ -130,7 +128,7 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_xb00n")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mad0u"]
-size = Vector3(1, 0.3857422, 0.63391113)
+size = Vector3(0.21072388, 0.3857422, 0.3294983)
 
 [node name="FlashlightBattery" type="Area3D" unique_id=2083858076]
 transform = Transform3D(0.9810099, 0.1874818, -0.04970031, -0.18728925, 0.9822676, 0.008545136, 0.050421063, 0.00092547876, 0.9987276, 0, 0, 0)
@@ -141,87 +139,36 @@ outline_material = ExtResource("2_xbqq1")
 [node name="Battery" type="Node3D" parent="." unique_id=1709158244]
 transform = Transform3D(0.976836, -0.21395816, 0.0036084428, 0.21398646, 0.97661036, -0.021009656, 0.0009711459, 0.021295145, 0.99977267, -0.5928145, 3.109108, 0.02704734)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Battery" unique_id=350312775]
-transform = Transform3D(0.0005750001, -4.5758952e-12, 5.456968e-12, 3.4106051e-12, 0.000575, -3.0013325e-11, -1.8189894e-12, 1.9099389e-11, 0.00057499984, -0.40138078, -3.558623, -0.16819754)
-mesh = SubResource("CylinderMesh_xbqq1")
-
-[node name="Cylinder_+Mat_1" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=1864699061]
-transform = Transform3D(0.9999999, 5.7625584e-09, 1.1175871e-08, 2.4854671e-08, 1, -7.450581e-09, -1.4901161e-08, 3.7252903e-09, 0.9999999, 407.22217, 800.10046, 546.6916)
+[node name="m1" type="MeshInstance3D" parent="Battery" unique_id=1864699061]
+transform = Transform3D(0.0005750002, 1.1652901e-12, 1.6370905e-11, 1.7877255e-11, 0.0005750002, -3.410605e-11, -1.4551915e-11, 2.228262e-11, 0.0005749998, -0.08583517, -3.0558856, 0.10477956)
 mesh = SubResource("ArrayMesh_y7fq4")
 
-[node name="Cylinder_-Mat_1" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=1210410529]
-transform = Transform3D(0.9999999, 5.7625584e-09, 1.1175871e-08, 2.4854671e-08, 1, -7.450581e-09, -1.4901161e-08, 3.7252903e-09, 0.9999999, 407.22217, 800.10046, 546.6916)
+[node name="m2" type="MeshInstance3D" parent="Battery" unique_id=1210410529]
+transform = Transform3D(0.0005750002, 1.1652901e-12, 1.6370905e-11, 1.7877255e-11, 0.0005750002, -3.410605e-11, -1.4551915e-11, 2.228262e-11, 0.0005749998, -0.08583517, -3.0558856, 0.10477956)
 mesh = SubResource("ArrayMesh_okuxk")
 
-[node name="Cylinder_Nikel_1" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=1705774501]
-transform = Transform3D(0.9999999, 5.7625584e-09, 1.1175871e-08, 2.4854671e-08, 1, -7.450581e-09, -1.4901161e-08, 3.7252903e-09, 0.9999999, 407.22217, 800.10046, 546.6916)
+[node name="m3" type="MeshInstance3D" parent="Battery" unique_id=1705774501]
+transform = Transform3D(0.0005750002, 1.1652901e-12, 1.6370905e-11, 1.7877255e-11, 0.0005750002, -3.410605e-11, -1.4551915e-11, 2.228262e-11, 0.0005749998, -0.08583517, -3.0558856, 0.10477956)
 mesh = SubResource("ArrayMesh_gmsts")
 
-[node name="Cylinder_+Mat_0" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=920803733]
-transform = Transform3D(0.9999996, -1.5133992e-08, 1.4901161e-08, 1.9092113e-08, 0.9999996, -3.7252903e-09, -1.4901161e-08, 1.8626451e-09, 0.9999997, 396.3125, 797.6378, 330.6455)
+[node name="m4" type="MeshInstance3D" parent="Battery" unique_id=920803733]
+transform = Transform3D(0.000575, -1.7308821e-11, 1.4551915e-11, 1.4182433e-11, 0.00057499995, -3.1832315e-11, -1.2732926e-11, 2.0008883e-11, 0.00057499966, -0.09210823, -3.057301, -0.01944692)
 mesh = SubResource("ArrayMesh_y7fq4")
 
-[node name="Cylinder_-Mat_0" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=245542466]
-transform = Transform3D(0.9999996, -1.5133992e-08, 1.4901161e-08, 1.9092113e-08, 0.9999996, -3.7252903e-09, -1.4901161e-08, 1.8626451e-09, 0.9999997, 396.3125, 797.6378, 330.6455)
+[node name="m5" type="MeshInstance3D" parent="Battery" unique_id=245542466]
+transform = Transform3D(0.000575, -1.7308821e-11, 1.4551915e-11, 1.4182433e-11, 0.00057499995, -3.1832315e-11, -1.2732926e-11, 2.0008883e-11, 0.00057499966, -0.09210823, -3.057301, -0.01944692)
 mesh = SubResource("ArrayMesh_okuxk")
 
-[node name="Cylinder_Nikel_0" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=767157765]
-transform = Transform3D(0.9999996, -1.5133992e-08, 1.4901161e-08, 1.9092113e-08, 0.9999996, -3.7252903e-09, -1.4901161e-08, 1.8626451e-09, 0.9999997, 396.3125, 797.6378, 330.6455)
-mesh = SubResource("ArrayMesh_gmsts")
-
-[node name="Cylinder_+Mat_2" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=1738622625]
-transform = Transform3D(0.9999999, 3.4924597e-09, 7.450581e-09, 1.19325705e-08, 0.9999999, -1.8626451e-09, -7.450581e-09, -1.8626451e-09, 0.9999999, 692.11206, 792.15137, 532.39856)
-mesh = SubResource("ArrayMesh_y7fq4")
-
-[node name="Cylinder_-Mat_2" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=855401347]
-transform = Transform3D(0.9999999, 3.4924597e-09, 7.450581e-09, 1.19325705e-08, 0.9999999, -1.8626451e-09, -7.450581e-09, -1.8626451e-09, 0.9999999, 692.11206, 792.15137, 532.39856)
-mesh = SubResource("ArrayMesh_okuxk")
-
-[node name="Cylinder_Nikel_2" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=1169674014]
-transform = Transform3D(0.9999999, 3.4924597e-09, 7.450581e-09, 1.19325705e-08, 0.9999999, -1.8626451e-09, -7.450581e-09, -1.8626451e-09, 0.9999999, 692.11206, 792.15137, 532.39856)
-mesh = SubResource("ArrayMesh_gmsts")
-
-[node name="Cylinder_+Mat_3" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=181835876]
-transform = Transform3D(1.0000002, 5.995389e-09, -3.7252903e-09, 1.7986167e-08, 1.0000006, -2.7939677e-09, 1.8626451e-08, 1.8626451e-09, 1, 683.99414, 790.31824, 371.59662)
-mesh = SubResource("ArrayMesh_y7fq4")
-
-[node name="Cylinder_-Mat_3" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=1956053019]
-transform = Transform3D(1.0000002, 5.995389e-09, -3.7252903e-09, 1.7986167e-08, 1.0000006, -2.7939677e-09, 1.8626451e-08, 1.8626451e-09, 1, 683.99414, 790.31824, 371.59662)
-mesh = SubResource("ArrayMesh_okuxk")
-
-[node name="Cylinder_Nikel_3" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=2082107204]
-transform = Transform3D(1.0000002, 5.995389e-09, -3.7252903e-09, 1.7986167e-08, 1.0000006, -2.7939677e-09, 1.8626451e-08, 1.8626451e-09, 1, 683.99414, 790.31824, 371.59662)
-mesh = SubResource("ArrayMesh_gmsts")
-
-[node name="Cylinder_+Mat_4" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=453037482]
-transform = Transform3D(0.37272385, -0.5094863, 0.77556473, 0.8915258, -0.035232197, -0.4515975, 0.25740755, 0.8597579, 0.44108778, 1011.92285, 637.2197, -15.826462)
-mesh = SubResource("ArrayMesh_y7fq4")
-
-[node name="Cylinder_-Mat_4" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=925020119]
-transform = Transform3D(0.37272385, -0.5094863, 0.77556473, 0.8915258, -0.035232197, -0.4515975, 0.25740755, 0.8597579, 0.44108778, 1011.92285, 637.2197, -15.826462)
-mesh = SubResource("ArrayMesh_okuxk")
-
-[node name="Cylinder_Nikel_4" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=2138349381]
-transform = Transform3D(0.37272385, -0.5094863, 0.77556473, 0.8915258, -0.035232197, -0.4515975, 0.25740755, 0.8597579, 0.44108778, 1011.92285, 637.2197, -15.826462)
-mesh = SubResource("ArrayMesh_gmsts")
-
-[node name="Cylinder_+Mat_5" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=883171514]
-transform = Transform3D(0.042989474, -0.9972903, 0.05968635, 0.9983926, 0.040674597, -0.039471887, 0.036937222, 0.061287254, 0.99743634, 1029.2856, 614.1442, 343.1312)
-mesh = SubResource("ArrayMesh_y7fq4")
-
-[node name="Cylinder_-Mat_5" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=1200070706]
-transform = Transform3D(0.042989474, -0.9972903, 0.05968635, 0.9983926, 0.040674597, -0.039471887, 0.036937222, 0.061287254, 0.99743634, 1029.2856, 614.1442, 343.1312)
-mesh = SubResource("ArrayMesh_okuxk")
-
-[node name="Cylinder_Nikel_5" type="MeshInstance3D" parent="Battery/MeshInstance3D" unique_id=149768304]
-transform = Transform3D(0.042989474, -0.9972903, 0.05968635, 0.9983926, 0.040674597, -0.039471887, 0.036937222, 0.061287254, 0.99743634, 1029.2856, 614.1442, 343.1312)
+[node name="m6" type="MeshInstance3D" parent="Battery" unique_id=767157765]
+transform = Transform3D(0.000575, -1.7308821e-11, 1.4551915e-11, 1.4182433e-11, 0.00057499995, -3.1832315e-11, -1.2732926e-11, 2.0008883e-11, 0.00057499966, -0.09210823, -3.057301, -0.01944692)
 mesh = SubResource("ArrayMesh_gmsts")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1888890751]
-transform = Transform3D(0.9757912, -0.20452344, -0.077467375, 0.20167801, 0.9785068, -0.04301184, 0.084599115, 0.026347117, 0.99606675, -0.015962994, 0.14334035, 0.002125023)
+transform = Transform3D(0.9757912, -0.20452344, -0.077467375, 0.20167801, 0.9785068, -0.04301184, 0.084599115, 0.026347117, 0.99606675, -0.038118824, 0.13826793, 0.018519737)
 shape = SubResource("BoxShape3D_mad0u")
 
 [node name="CollectSound" type="AudioStreamPlayer3D" parent="." unique_id=1366966947]
+transform = Transform3D(1, -6.7957444e-09, 0, -7.246854e-09, 1, -7.799827e-09, 0, 2.3283064e-10, 1, 0.07022646, 0.059967846, -0.04037316)
 stream = ExtResource("2_6uj15")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
