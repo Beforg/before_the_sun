@@ -7,7 +7,7 @@ uniform float terror_intensity : hint_range(0.0, 1.0) = 0.0;
 uniform vec4 base_color : source_color = vec4(0.55, 0.05, 0.05, 1.0);
 
 // Velocidade da pulsação (simulando batimento cardíaco)
-uniform float pulse_speed = 4.0;
+uniform float pulse_speed = 2.0;
 
 void fragment() {
     // Centraliza as coordenadas UV
@@ -19,7 +19,7 @@ void fragment() {
     float dist = length(center_uv);
     
     // Cria um gradiente suave. Quanto maior o terror, mais ele invade o centro.
-    float inner_radius = 0.8 - (terror_intensity * 0.5);
+    float inner_radius = 0.95 - (terror_intensity * 0.5);
     float vignette = smoothstep(inner_radius, inner_radius - 0.4, dist);
     
     // Inverte o gradiente para as bordas ficarem escuras

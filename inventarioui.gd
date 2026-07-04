@@ -1,19 +1,24 @@
 extends CanvasLayer
 
-@onready var grid_itens = $ColorRect/VBoxContainer/GridItens # Ajuste o caminho para o seu Grid
-@onready var grid_chaves = $ColorRect/VBoxContainer/GridChaves # Ajuste o caminho
+# --- REFERÊNCIAS DOS NÓS NA TELA ---
+@onready var label_titulo = $ColorRect/VBoxContainer/Label # A Label escrita "Inventario"
+@onready var grid_itens = $ColorRect/VBoxContainer/GridItens
+@onready var grid_chaves = $ColorRect/VBoxContainer/GridChaves
 
-# Carrega a cena do quadradinho que criamos no Passo 3
+# Carrega a cena do quadradinho
 var slot_scene = preload("res://item_slot.tscn")
 
-# Carregue aqui as imagens png que você desenhou
-var tex_cura = preload("res://assets/models/cura.png")
-var tex_bateria = preload("res://assets/models/enemy_iddle.png")
-var tex_adrenalina = preload("res://assets/models/adrenalina.png")
-var tex_bloqueado = preload("res://assets/models/items/pubg_mobile_adrenaline_syringe_2.png") # A imagem do X
+# --- SUAS IMAGENS ---
+var tex_cura = preload("res://assets/texture/inv/cure.png")
+var tex_bateria = preload("res://assets/texture/inv/battery.png")
+var tex_adrenalina = preload("res://assets/texture/inv/adr.png")
+var tex_vazio = preload("res://assets/texture/inv/empty.png") # A imagem da moldura vazia
 
 func _ready() -> void:
-	visible = false # Começa escondido
+	visible = false 
+	
+	if GameManager.has_signal("inventory_upgraded"):
+		GameManager.inventory_upgraded.connect(_on_inventory_upgraded)
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("inventario"):
@@ -21,52 +26,75 @@ func _input(event: InputEvent) -> void:
 		
 		if visible:
 			_update_ui() 
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE # Solta o mouse
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE 
 		else:
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED # Prende o mouse
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED 
 
 func _update_ui() -> void:
-	# 1. Limpa o grid antigo
+	# 1. Atualiza o texto do título para mostrar a capacidade máxima do jogador
+	label_titulo.text = "Inventário (Máx. " + str(GameManager.max_inventory_slots) + " Itens)"
+
+	# 2. Limpa os dois grids forçando a remoção da árvore
 	for child in grid_itens.get_children():
+		grid_itens.remove_child(child) 
+		child.queue_free()
+	for child in grid_chaves.get_children():
+		grid_chaves.remove_child(child) 
 		child.queue_free()
 		
-	# 2. Adiciona os Itens Agrupados
-	# A Lanterna (Item fixo que não conta no limite de 6 slots)
-	
-	if GameManager.cures_count > 0:
-		_criar_slot(tex_cura, GameManager.cures_count)
-	if GameManager.torch_refills > 0:
-		_criar_slot(tex_bateria, GameManager.torch_refills)
-	if GameManager.adrenaline_count > 0:
-		_criar_slot(tex_adrenalina, GameManager.adrenaline_count)
+	# ---------------------------------------------------------
+	# GRID 1: ITENS CONSUMÍVEIS (Fixo em 3 slots visuais)
+	# ---------------------------------------------------------
+	var itens_desenhados = 0
 		
-	# 3. Preencher os espaços vazios e bloqueados
-	# O cálculo visual: Quantos "quadrados" de itens normais desenhamos?
-	var quadrados_desenhados = grid_itens.get_child_count()
+	if GameManager.torch_refills > 0:
+		_criar_slot(grid_itens, tex_bateria, GameManager.torch_refills)
+		itens_desenhados += 1
+		
+	if GameManager.adrenaline_count > 0:
+		_criar_slot(grid_itens, tex_adrenalina, GameManager.adrenaline_count)
+		itens_desenhados += 1
+		
+	if GameManager.cures_count > 0:
+		_criar_slot(grid_itens, tex_cura, GameManager.cures_count)
+		itens_desenhados += 1
+		
+	# Preenche o restante para sempre ter exatos 3 quadrados na tela
+	for i in range(3 - itens_desenhados):
+		_criar_slot(grid_itens, tex_vazio, 0)
+			
+	# ---------------------------------------------------------
+	# GRID 2: ITENS CHAVE (Fixo em 2 slots visuais)
+	# ---------------------------------------------------------
+	var chaves_desenhadas = 0
 	
-	# Para desenhar a exata imagem do seu design, vamos preencher até dar 6 colunas
-	# Se ele tiver os 6 slots liberados, mas só 3 itens diferentes, desenha os vazios
-	var limite_visual = max(6, GameManager.max_inventory_slots)
-	
-	for i in range(limite_visual - quadrados_desenhados):
-		# Se o slot visual que estamos desenhando agora é maior que o max_inventory_slots, ele é um slot bloqueado com X
-		if quadrados_desenhados + i >= GameManager.max_inventory_slots:
-			_criar_slot(tex_bloqueado, 0) # Slot com X
-		else:
-			_criar_slot(null, 0) # Slot vazio escuro
+	# Exemplo de como você vai desenhar as chaves quando criar elas:
+	# if GameManager.has_igreja_key:
+	# 	_criar_slot(grid_chaves, tex_chave_igreja, 1)
+	# 	chaves_desenhadas += 1
+		
+	# Preenche o restante para sempre ter exatos 2 quadrados para chaves
+	for i in range(2 - chaves_desenhadas):
+		_criar_slot(grid_chaves, tex_vazio, 0)
 
-func _criar_slot(textura: Texture2D, quantidade: int) -> void:
+# --- FUNÇÃO DE CRIAÇÃO (Agora recebe o Grid Alvo como parâmetro) ---
+func _criar_slot(grid_alvo: GridContainer, textura: Texture2D, quantidade: int) -> void:
 	var novo_slot = slot_scene.instantiate()
-	grid_itens.add_child(novo_slot)
+	grid_alvo.add_child(novo_slot) # Agora ele obedece em qual Grid deve entrar!
 	
-	# Busca a imagem e o texto dentro do quadradinho
 	var icone = novo_slot.get_node("TextureRect")
-	var label_qtd = novo_slot.get_node("Label")
+	var label_qtd = novo_slot.get_node("Label") 
 	
 	if textura != null:
 		icone.texture = textura
+	else:
+		icone.texture = null 
 	
 	if quantidade > 1:
 		label_qtd.text = str(quantidade)
 	else:
-		label_qtd.text = "" # Esconde o número se for 1, 0 ou item bloqueado
+		label_qtd.text = ""
+
+func _on_inventory_upgraded(_new_max: int) -> void:
+	if visible:
+		_update_ui()

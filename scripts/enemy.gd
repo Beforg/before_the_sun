@@ -1,14 +1,17 @@
 extends CharacterBody3D
 
-enum State { HIDDEN, STALKING, HUNTING, FAKE_CHARGE, OBSERVING, INVESTIGATING }
+enum State { HIDDEN, STALKING, HUNTING, FAKE_CHARGE, OBSERVING, INVESTIGATING, INTRO_WALK }
 var current_state: State = State.HIDDEN
 var is_active: bool = false 
 
 @onready var nav_agent = $NavAgent
 @onready var pivot = $Pivot
-@onready var anim_player = $Pivot/EnemyModel2/AnimationPlayer 
+@onready var anim_player = $Pivot/enemy/AnimationPlayer 
 @onready var terror_aura = $TerrorAura
 @export var player: Node3D
+
+# --- NOVA VARIÁVEL: Ponto para onde ele vai andar na introdução ---
+@export var intro_walk_target: Node3D 
 
 # Configurações de Velocidade e Movimento
 @export var stalk_speed: float = 2.2 
@@ -22,7 +25,7 @@ var stalk_timer := 0.0
 var stalk_update_rate := 3.5 
 var is_stunned_by_light := false
 var stun_timer := 0.0
-var is_performing_action := false # Impede a IA de bugar enquanto toca uma animação de evento
+var is_performing_action := false 
 
 # --- VARIÁVEIS DE INVESTIGAÇÃO, MEMÓRIA E ATAQUE ---
 var fake_charge_cooldown := 0.0
@@ -35,13 +38,34 @@ func _ready() -> void:
 	GameManager.monster_awakened.connect(_on_monster_awakened)
 	GameManager.difficulty_increased.connect(_on_difficulty_increased)
 	randomize()
+	
+	is_active = false 
+	visible = true 
+	
+	anim_player.play("mixamo_com_005")
 
 func _physics_process(delta: float) -> void:
-	if not is_active or is_performing_action:
-		return
-		
+	# 1. GRAVIDADE SEMPRE ATIVA (Impede o Limbo)
 	if not is_on_floor():
 		velocity.y -= 9.8 * delta
+		
+	# 2. SE ESTÁ FAZENDO UMA AÇÃO (Girando, Atacando):
+	if is_performing_action:
+		velocity.x = 0 
+		velocity.z = 0
+		move_and_slide()
+		return
+		
+	# 3. SE ESTÁ DORMINDO (Esperando o Galão):
+	if not is_active:
+		# CASO 1: Jogador chegou muito perto do monstro adormecido!
+		if player != null and global_position.distance_to(player.global_position) < 4.0:
+			_punish_early_wakeup()
+		else:
+			velocity.x = 0 
+			velocity.z = 0
+			move_and_slide() 
+		return
 		
 	# Reduz os timers
 	if fake_charge_cooldown > 0.0: fake_charge_cooldown -= delta
@@ -55,18 +79,27 @@ func _physics_process(delta: float) -> void:
 		
 		# --- 1. O SISTEMA DE ATAQUE (LETAL VS NÃO LETAL) ---
 		if distance <= 3.2 and current_state != State.FAKE_CHARGE:
-			# Se o terror já está alto, o bote é fatal
-			if GameManager.terror_level >= 80.0:
-				_execute_lethal_attack()
-				return
-			# Se o terror está baixo e o ataque não letal está pronto, ele "brinca" com a comida
-			elif grab_cooldown <= 0.0:
-				_execute_non_lethal_grab()
-				return
+			
+			if current_state == State.INTRO_WALK:
+				# A CORREÇÃO: Aumentamos o gatilho para 2.8 metros! 
+				# Isso garante que ele te mate ANTES da cápsula de colisão física travar o movimento.
+				if distance <= 2.8: 
+					print("DIRETOR: Jogador entrou na frente do monstro caminhando! Punição letal.")
+					GameManager.terror_level = 100.0 # Garante a morte
+					_execute_lethal_attack()
+					return 
+			else:
+				# COMPORTAMENTO NORMAL (Fora da cena de introdução)
+				if GameManager.terror_level >= 80.0:
+					_execute_lethal_attack()
+					return
+				elif grab_cooldown <= 0.0:
+					_execute_non_lethal_grab()
+					return
 		
 		# --- 2. GERENCIAMENTO DE STUN (SUSTO NA LUZ) ---
 		if is_stunned_by_light:
-			anim_player.play("mixamo_com")
+			anim_player.play("mixamo_com_005")
 			stun_timer -= delta
 			
 			velocity.x = move_toward(velocity.x, 0, stalk_speed * 4.0 * delta)
@@ -86,7 +119,6 @@ func _physics_process(delta: float) -> void:
 		var is_looking_angle = player_forward.dot(dir_to_monster) > 0.70
 		var is_player_looking = is_looking_angle and has_los
 		
-		# Atualiza a memória da IA se ela estiver vendo o jogador e houver luz suficiente
 		if has_los and light > 1.0:
 			last_known_pos = player.global_position
 		
@@ -101,75 +133,91 @@ func _physics_process(delta: float) -> void:
 			State.FAKE_CHARGE: _process_fake_charge_behavior(delta, distance)
 			State.OBSERVING: _process_observing_behavior(delta, is_player_looking)
 			State.INVESTIGATING: _process_investigating_behavior(delta)
+			State.INTRO_WALK: _process_intro_walk_behavior(delta)
 					
 	# Lógica da Aura de Terror
 	_process_terror_aura(delta)
 
-# --- AÇÕES DE EVENTO (GRAB E GAME OVER) ---
+# --- AÇÕES DE PUNIÇÃO E EVENTOS ---
+
+func _punish_early_wakeup() -> void:
+	is_active = true
+	is_performing_action = true 
+	
+	print("DIRETOR: O jogador foi curioso e acordou o monstro cedo! Morte iminente.")
+	anim_player.play("mixamo_com_009") 
+	
+	await anim_player.animation_finished
+	
+	GameManager.terror_level = 100.0
+	hunt_speed *= 1.5 
+	
+	is_performing_action = false
+	current_state = State.HUNTING 
+
 func _execute_lethal_attack() -> void:
 	is_performing_action = true
-	anim_player.play("mixamo_com_003") 
+	anim_player.play("mixamo_com_010") 
 	velocity = Vector3.ZERO 
 	print("Game Over 3D: Ataque Letal!")
 	
 	await get_tree().create_timer(1.2).timeout 
 	GameManager.reset_game()
-	get_tree().change_scene_to_file("res://game_over_screen.tscn")
+	get_tree().change_scene_to_file("res://scripts/game_over_screen.tscn")
 
 func _execute_non_lethal_grab() -> void:
 	is_performing_action = true
-	anim_player.play("mixamo_com_003") 
+	anim_player.play("mixamo_com_010") 
 	velocity = Vector3.ZERO 
 	print("GRAB! Monstro feriu a mente do jogador e fugiu.")
 	
-	# Dá um pico imenso de terror, mas deixa ele vivo
 	GameManager.terror_level = min(100.0, GameManager.terror_level + 50.0)
 	
-	# Toca a animação por 1 segundo e depois o monstro some em um teleporte
 	await get_tree().create_timer(1.0).timeout 
 	
-	grab_cooldown = 45.0 # Demora muito para tentar outro Grab
+	grab_cooldown = 45.0 
 	teleport_to_flank_position()
 	current_state = State.STALKING
 	is_performing_action = false
 
 # --- FUNÇÃO DE TRANSIÇÃO DE ESTADOS ORGÂNICA ---
 func _update_monster_state(light: float, distance: float, is_player_looking: bool, has_los: bool) -> void:
-	if current_state == State.FAKE_CHARGE or current_state == State.OBSERVING:
+	if current_state == State.FAKE_CHARGE or current_state == State.OBSERVING or current_state == State.INTRO_WALK:
+		return
+	# NOVA REGRA: SISTEMA DE "RUBBER BANDING" (Corda Elástica)
+	# Nunca deixa o jogador ficar em paz. Se ele fugir para muito longe
+	# e não estiver olhando, o monstro reseta a posição ao redor dele!
+	if distance > 28.0 and not is_player_looking:
+		teleport_to_flank_position()
+		current_state = State.STALKING
 		return
 	
-	# NOVA REGRA: A Investigação cega (A luz apagou e ele perdeu contato visual)
 	if not has_los and light < 2.0 and last_known_pos != Vector3.ZERO:
 		current_state = State.INVESTIGATING
 		return
 	
-	# Punição por Encurralar
 	if (current_state == State.HIDDEN or current_state == State.STALKING) and is_player_looking and distance < 12.0 and escape_grace_period <= 0.0:
 		current_state = State.HUNTING
 		GameManager.terror_level = 100.0 
 		return
 
-	# Gatilho da Falsa Investida
 	if current_state == State.STALKING and distance > 16.0 and fake_charge_cooldown <= 0.0:
 		if randf() < 0.004: 
 			current_state = State.FAKE_CHARGE
 			fake_charge_cooldown = 25.0 
 			return
 			
-	# Gatilho Raro: Observação Silenciosa
 	if current_state == State.STALKING and distance > 18.0 and observe_timer <= 0.0:
-		if randf() < 0.003: # Chance muita rara enquanto roda o mapa
+		if randf() < 0.003: 
 			current_state = State.OBSERVING
-			observe_timer = randf_range(4.0, 7.0) # Fica parado te encarando de 4 a 7 segundos
+			observe_timer = randf_range(4.0, 7.0)
 			return
 
-	# Fúria
 	var is_furious = (current_state == State.HUNTING and GameManager.terror_level > 80.0)
 	if GameManager.terror_level >= 95.0 or is_furious:
 		current_state = State.HUNTING
 		return
 		
-	# Susto na Luz
 	if current_state == State.STALKING and is_player_looking and light > 4.0 and not is_stunned_by_light:
 		if randf() < 0.005: 
 			is_stunned_by_light = true
@@ -185,15 +233,42 @@ func _update_monster_state(light: float, distance: float, is_player_looking: boo
 
 # --- COMPORTAMENTOS ESPECÍFICOS ---
 
+func _process_intro_walk_behavior(delta: float) -> void:
+	anim_player.play("mixamo_com_008", -1, 1.0) 
+	pivot.visible = true
+	
+	if intro_walk_target == null:
+		current_state = State.STALKING
+		return
+		
+	nav_agent.target_position = intro_walk_target.global_position
+	var next_path_pos = nav_agent.get_next_path_position()
+	var dir = global_position.direction_to(next_path_pos).normalized()
+	dir.y = 0
+	
+	var intro_speed = stalk_speed * 0.8 
+	
+	velocity.x = dir.x * intro_speed 
+	velocity.z = dir.z * intro_speed
+	
+	_look_at_target(intro_walk_target.global_position)
+	
+	move_and_slide()
+	
+	var pos_2d = Vector2(global_position.x, global_position.z)
+	var target_2d = Vector2(intro_walk_target.global_position.x, intro_walk_target.global_position.z)
+	
+	if pos_2d.distance_to(target_2d) < 2.5:
+		print("DIRETOR: Caminhada concluída. O monstro chegou no ponto e a caçada normal começou!")
+		current_state = State.STALKING
+
 func _process_observing_behavior(delta: float, is_player_looking: bool) -> void:
-	anim_player.play("mixamo_com") # Idle animation
+	anim_player.play("mixamo_com_005") 
 	pivot.visible = true
 	
 	velocity = Vector3.ZERO
 	_look_at_target(player.global_position)
 	
-	# Comportamento Raro: Se você iluminar e focar nele enquanto ele te observa,
-	# ele não ataca. Ele apenas "quebra" a observação e se esconde de propósito.
 	if is_player_looking and observe_timer < 3.0:
 		print("Comportamento Raro: O monstro se sentiu observado e recuou!")
 		current_state = State.HIDDEN
@@ -204,36 +279,33 @@ func _process_observing_behavior(delta: float, is_player_looking: bool) -> void:
 		current_state = State.STALKING
 
 func _process_investigating_behavior(delta: float) -> void:
-	anim_player.play("mixamo_com_001") # Espreita lenta
+	anim_player.play("mixamo_com_008") 
 	pivot.visible = true
 	
 	var distance_to_memory = global_position.distance_to(last_known_pos)
 	
-	# Se chegou no local onde o jogador estava e ele não tá lá
 	if distance_to_memory < 2.0:
 		velocity = Vector3.ZERO
-		anim_player.play("mixamo_com") # Fica em Idle olhando pros lados
+		anim_player.play("mixamo_com_005") 
 		
-		# Conta como se tivesse investigado e volta a rondar as sombras
 		if randf() < 0.01: 
 			last_known_pos = Vector3.ZERO
 			current_state = State.STALKING
 		return
 	
-	# Vai até o local da memória
 	nav_agent.target_position = last_known_pos
 	var next_path_pos = nav_agent.get_next_path_position()
 	var dir = global_position.direction_to(next_path_pos).normalized()
 	dir.y = 0
 	
-	velocity.x = dir.x * (stalk_speed * 0.8) # Anda mais devagar focado no chão
+	velocity.x = dir.x * (stalk_speed * 0.8)
 	velocity.z = dir.z * (stalk_speed * 0.8)
 	
 	_look_at_target(last_known_pos)
 	move_and_slide()
 
 func _process_hidden_behavior(delta: float) -> void:
-	anim_player.play("mixamo_com_002")
+	anim_player.play("mixamo_com_008")
 	pivot.visible = true
 	
 	var escape_dir = player.global_position.direction_to(global_position)
@@ -246,9 +318,14 @@ func _process_hidden_behavior(delta: float) -> void:
 	
 	_look_at_target(global_position + escape_dir)
 	move_and_slide()
+	
+	var distance = global_position.distance_to(player.global_position)
+	if distance > 20.0:
+		teleport_to_flank_position()
+		current_state = State.STALKING
 
 func _process_stalking_behavior(delta: float, is_player_looking: bool, distance: float) -> void:
-	anim_player.play("mixamo_com_001")
+	anim_player.play("mixamo_com_008")
 	pivot.visible = true
 	
 	stalk_timer += delta
@@ -277,7 +354,7 @@ func _process_stalking_behavior(delta: float, is_player_looking: bool, distance:
 	move_and_slide()
 
 func _process_hunting_behavior(delta: float, distance: float) -> void:
-	anim_player.play("mixamo_com_002")
+	anim_player.play("mixamo_com_007")
 	pivot.visible = true
 	
 	var player_forward = -player.camera.global_transform.basis.z.normalized()
@@ -302,7 +379,7 @@ func _process_hunting_behavior(delta: float, distance: float) -> void:
 	move_and_slide()
 
 func _process_fake_charge_behavior(delta: float, distance: float) -> void:
-	anim_player.play("Armature|mixamo_com|Layer0")
+	anim_player.play("mixamo_com_007")
 	pivot.visible = true
 	
 	if distance <= 4.8:
@@ -345,24 +422,48 @@ func _look_at_target(target_pos: Vector3) -> void:
 
 func teleport_to_flank_position() -> void:
 	var desired_pos = Vector3.ZERO
+	var random_choice = randf()
 	
-	if randf() < 0.30:
-		var player_forward = -player.global_transform.basis.z.normalized()
-		desired_pos = player.global_position + (player_forward * randf_range(16.0, 22.0))
-	else:
-		var player_back = player.global_transform.basis.z.normalized()
-		var random_angle = randf_range(-PI/2, PI/2) 
-		var spawn_dir = player_back.rotated(Vector3.UP, random_angle).normalized()
-		desired_pos = player.global_position + (spawn_dir * randf_range(11.0, 15.0))
+	# Usamos a câmera como referência para saber exatamente para onde o jogador está olhando
+	var cam_basis = player.camera.global_transform.basis
+	
+	if random_choice < 0.20:
+		# 20% DE CHANCE: FRENTE (Muito longe e ligeiramente para os lados)
+		var player_forward = -cam_basis.z.normalized()
+		var angle_offset = randf_range(PI/8, PI/4) # Desvia a rota para não nascer no centro da tela
+		if randf() > 0.5: angle_offset *= -1
 		
-	desired_pos.y = player.global_position.y 
+		var spawn_dir = player_forward.rotated(Vector3.UP, angle_offset).normalized()
+		desired_pos = player.global_position + (spawn_dir * randf_range(18.0, 24.0))
+		
+	elif random_choice < 0.60:
+		# 40% DE CHANCE: FLANCOS LATERAIS (Esquerda ou Direita)
+		var player_right = cam_basis.x.normalized()
+		var side_dir = player_right if randf() > 0.5 else -player_right # Escolhe um dos lados
+		
+		var angle_variation = randf_range(-PI/6, PI/6) # Dá uma leve angulada para frente ou para trás
+		var spawn_dir = side_dir.rotated(Vector3.UP, angle_variation).normalized()
+		desired_pos = player.global_position + (spawn_dir * randf_range(12.0, 16.0))
+		
+	else:
+		# 40% DE CHANCE: COSTAS (Perto para pressão imediata)
+		var player_back = cam_basis.z.normalized()
+		var angle_variation = randf_range(-PI/3, PI/3)
+		var spawn_dir = player_back.rotated(Vector3.UP, angle_variation).normalized()
+		desired_pos = player.global_position + (spawn_dir * randf_range(9.0, 14.0))
+		
+	# Nasce acima do jogador para cair no chão e não dentro do morro
+	desired_pos.y = player.global_position.y + 3.0 
 	
 	var map = get_world_3d().get_navigation_map()
 	var safe_pos = NavigationServer3D.map_get_closest_point(map, desired_pos)
 	
-	global_position = safe_pos
+	if safe_pos != Vector3.ZERO:
+		global_position = safe_pos
+	else:
+		global_position = desired_pos
+		
 	stalk_offset_target = Vector3.ZERO
-
 func _process_terror_aura(delta: float) -> void:
 	var bodies = terror_aura.get_overlapping_bodies()
 	for body in bodies:
@@ -372,8 +473,27 @@ func _process_terror_aura(delta: float) -> void:
 			GameManager.increase_terror(intensity * delta)
 
 func _on_monster_awakened() -> void:
+	if is_active:
+		return
+		
 	is_active = true
-	teleport_to_flank_position()
+	is_performing_action = true 
+	
+	visible = true 
+	
+	print("DIRETOR: Monstro acordou! Tocando animação de virar...")
+	anim_player.play("mixamo_com_009")
+	
+	await anim_player.animation_finished
+	
+	is_performing_action = false
+	
+	if intro_walk_target != null:
+		current_state = State.INTRO_WALK
+		print("DIRETOR: Ponto de destino encontrado. Iniciando caminhada lenta.")
+	else:
+		teleport_to_flank_position()
+		current_state = State.STALKING
 
 func _on_difficulty_increased(level: int) -> void:
 	if level == 1:
