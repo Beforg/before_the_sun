@@ -22,7 +22,8 @@ var bob_freq: float = 2.3 # Frequência base
 @export var bob_amp: float = 0.08 
 var t_bob: float = 0.0
 var base_camera_pos: Vector3 
-var light_drain_rate: float = 0.05
+var light_drain_rate: float = 0.0095
+var light_drain_rate_combat = 0.05
 
 @onready var torch = $Camera3D/SpotLight3D # Sua nova lanterna 3D!
 @onready var heart_low = $HeartbeatLow
@@ -93,11 +94,13 @@ func _physics_process(delta: float) -> void:
 	# --- 1. GESTÃO DE VELOCIDADE E ESTADOS ---
 	if GameManager.is_adrenaline_active:
 		if GameManager.is_addicted:
+			camera.fov = lerp(camera.fov, 120.0, delta * 4.0)
 			speed = walk_speed * 1.15 # Bônus viciado
-			bob_freq = 3.8 # Passos um pouco mais rápidos
+			bob_freq = 2.4 # Passos um pouco mais rápidos
 		else:
 			speed = walk_speed * 1.24 # Corrida desesperada
-			bob_freq = 2.8 # Câmera balança muito rápido!
+			bob_freq = 1.8 # Câmera balança muito rápido!
+			camera.fov = lerp(camera.fov, 75.0, delta * 3.0)
 	elif GameManager.terror_level >= 50.0:
 		speed = walk_speed * 0.8 # Lento por pânico
 		bob_freq = 1.5 # Passos pesados e arrastados
@@ -108,6 +111,9 @@ func _physics_process(delta: float) -> void:
 	# --- 2. DRENO DA LANTERNA ---
 	if torch.light_energy > 0.2:
 		if GameManager.gasoline_count > 0:
+			torch.light_energy -= light_drain_rate_combat * delta
+			torch.spot_range -= (light_drain_rate_combat * 2.05) * delta
+		else:
 			torch.light_energy -= light_drain_rate * delta
 			torch.spot_range -= (light_drain_rate * 2.05) * delta
 

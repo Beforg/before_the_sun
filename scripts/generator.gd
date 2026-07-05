@@ -12,7 +12,9 @@ var is_activated = false
 
 func highlight() -> void:
 	# Só destaca o gerador se ele ainda estiver desligado
+	
 	if generator_mesh and outline_material and not is_activated:
+		GameManager.display_interact_text("Pressione [E] para interagir")
 		if generator_mesh is MeshInstance3D:
 			generator_mesh.material_overlay = outline_material
 			generator_mesh2.material_overlay = outline_material
@@ -20,6 +22,7 @@ func highlight() -> void:
 
 func unhighlight() -> void:
 	if generator_mesh and generator_mesh is MeshInstance3D:
+		GameManager.clear_interaction_text()
 		generator_mesh.material_overlay = null
 		generator_mesh2.material_overlay = null
 		generator_mesh3.material_overlay = null
@@ -31,7 +34,7 @@ func interact() -> void:
 	if GameManager.gasoline_count >= 10:
 		_activate_generator()
 	else:
-		print("Falta combustível. Tenho " + str(GameManager.gasoline_count) + "/10 galões.")
+		GameManager.display_message("Gasolina insuficiente.")
 
 func _activate_generator() -> void:
 	is_activated = true

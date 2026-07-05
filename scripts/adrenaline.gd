@@ -6,13 +6,17 @@ extends CollisionObject3D
 
 func highlight() -> void:
 	# Aplica a borda brilhante por cima do material original
+	GameManager.display_interact_text("Pressione [E] para coletar Adrenalina")
 	if mesh and outline_material:
 		mesh.material_overlay = outline_material
+		
 
 func unhighlight() -> void:
 	# Remove a borda quando o jogador desvia o olhar
+	GameManager.clear_interaction_text()
 	if mesh:
 		mesh.material_overlay = null
+		
 
 func interact() -> void:
 	print("Coletou: ", item_name)
@@ -20,6 +24,7 @@ func interact() -> void:
 	# Aqui você colocará os ifs do GameManager no futuro
 	if item_name == "Adrenalina" && GameManager.has_free_space():
 		GameManager.collect_adrenaline()
+		GameManager.display_message("Adrenalina coletada")
 		queue_free()
 	# Destrói o item após coletar
 	
