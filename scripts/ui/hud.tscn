@@ -32,12 +32,9 @@ mouse_filter = 2
 color = Color(0.54509807, 0, 0, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="PanicVignette" unique_id=1786271098]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 0
+offset_right = 211.0
+offset_bottom = 292.0
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
@@ -46,33 +43,25 @@ theme_override_constants/margin_bottom = 20
 [node name="VBoxContainer" type="VBoxContainer" parent="PanicVignette/MarginContainer" unique_id=218679287]
 layout_mode = 2
 
-[node name="GasLabel" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=2132973534]
+[node name="TerrorBar" type="ProgressBar" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=1826441516]
+custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
-text = "Galões: 0/10"
+show_percentage = false
 
-[node name="TerrorLabel" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=134851939]
+[node name="TextAdrenalineTimer" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=878461419]
 layout_mode = 2
-text = "Terror: 0%"
 
-[node name="TextTorchRefil" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=1581824768]
+[node name="StatusLabel" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=1709698266]
 layout_mode = 2
-text = "Bateria"
 
-[node name="Adrenalina" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=1948398836]
-layout_mode = 2
-text = "Adrenalina"
-
-[node name="TextCura" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=2028568859]
-layout_mode = 2
-text = "Terror: 0%"
-
-[node name="TextStatus" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=1592068086]
-layout_mode = 2
-text = "Galões: 0/10"
-
-[node name="TextAdrenalineTimer" type="Label" parent="PanicVignette/MarginContainer/VBoxContainer" unique_id=1787123647]
-layout_mode = 2
-text = "Galões: 0/10"
+[node name="BatteryIcon" type="TextureRect" parent="PanicVignette" unique_id=749400887]
+custom_minimum_size = Vector2(12, 12)
+layout_mode = 0
+offset_left = 1016.0
+offset_top = 32.0
+offset_right = 1052.0
+offset_bottom = 60.0
+expand_mode = 1
 
 [node name="Dot" type="Label" parent="PanicVignette" unique_id=1611226656]
 modulate = Color(1, 1, 1, 0.4745098)
@@ -95,18 +84,33 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="InteractionText" type="Label" parent="PanicVignette" unique_id=485918446]
-layout_mode = 0
-offset_left = 495.0
-offset_top = 521.0
-offset_right = 665.0
-offset_bottom = 547.0
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -19.0
+grow_horizontal = 2
+grow_vertical = 0
 text = "Pressione [E] para ler"
 label_settings = SubResource("LabelSettings_546lt")
+horizontal_alignment = 1
 
 [node name="InformativeText" type="Label" parent="PanicVignette" unique_id=1439083704]
 layout_mode = 0
-offset_left = 963.0
-offset_top = 195.0
-offset_right = 1138.0
-offset_bottom = 218.0
-text = "1 Adrenalina coletada."
+offset_left = 943.0
+offset_top = 124.0
+offset_right = 1118.0
+offset_bottom = 250.0
+text = "Texto Informativo"
+horizontal_alignment = 1
+
+[node name="AdrenalineOverlay" type="ColorRect" parent="." unique_id=1122022137]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.9095223, 0.99999994, 0.9996057, 0)

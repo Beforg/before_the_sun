@@ -19,10 +19,26 @@ var adrenaline_time_left: float = 0.0
 var is_adrenaline_active: bool = false
 var adrenaline_use_history: Array = []
 var adrenaline_upgrade_level: int = 0
-
+var objective: String = "Explore a estrada"
+var bilhete_count = 0
 # itens chave:
 var has_gate_key: bool = false;
+var has_map: bool = false;
+# --- SINAIS DO HUD ---
+signal show_informative_text(texto: String)
+signal show_interactive_text(texto:String)
 
+func _collect_bilhete() -> void:
+	bilhete_count+=1
+func display_interact_text(mensagem: String) -> void:
+	emit_signal("show_interactive_text", mensagem)
+func clear_interaction_text() -> void:
+	emit_signal("show_interactive_text", "")
+	
+func display_message(mensagem: String) -> void:
+	emit_signal("show_informative_text", mensagem)
+	print("MENSAGEM NA TELA: ", mensagem)
+	
 func collect_gasoline(): 
 	gasoline_count += 1
 	_check_difficulty_milestones()
@@ -31,8 +47,10 @@ func collect_adrenaline(): adrenaline_count += 1
 func collect_torch_refill(): torch_refills += 1
 func collect_cure(): cures_count += 1
 
-
-
+func _update_objective(new: String):
+	objective = new
+func _collect_map(): has_map = true;
+	
 func _check_difficulty_milestones():
 	match gasoline_count:
 		1:

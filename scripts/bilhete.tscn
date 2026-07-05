@@ -1,0 +1,107 @@
+[gd_scene format=4 uid="uid://bskswoqav8dbj"]
+
+[ext_resource type="Script" uid="uid://di6lpeeaue0mc" path="res://scripts/interactable.gd" id="1_3oogh"]
+[ext_resource type="Material" uid="uid://grsb8vx7m0ko" path="res://scripts/ui/map_outline.tres" id="2_1y72w"]
+[ext_resource type="Texture2D" uid="uid://f81vjbgvscf7" path="res://assets/models/items/old_paper_1.png" id="3_1y72w"]
+[ext_resource type="Texture2D" uid="uid://c0t7qsmly5cqi" path="res://assets/models/items/old_paper_0.png" id="3_ungr0"]
+[ext_resource type="Texture2D" uid="uid://bq4v4rs4qad5v" path="res://assets/models/items/old_paper_2.png" id="4_r7m52"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pktcv"]
+resource_name = "Mat_Paper"
+transparency = 4
+cull_mode = 2
+albedo_texture = ExtResource("3_ungr0")
+metallic_texture = ExtResource("3_1y72w")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("3_1y72w")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("4_r7m52")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_nibv4"]
+_surfaces = [{
+"aabb": AABB(-1, 0, -1.3503624, 2, 1e-05, 2.7007248),
+"format": 34896670721,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"name": "Mat_Paper",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAAAAP//AAD//wAAAAAAAP//AAD//wAAAAAAAAAAAAA=")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_vxb1x"]
+resource_name = "Sketchfab_Scene_Object_0"
+_surfaces = [{
+"aabb": AABB(-1, 0, -1.3503624, 2, 1e-05, 2.7007248),
+"attribute_data": PackedByteArray("wbrQA8G60AMmwjo/gDx0PCbCOj+APHQ81AIu/NQCLvyAOzU8Di98P4A7NTwOL3w/1ALQA9QC0AOgOzU8gDx0PKA7NTyAPHQ8wbou/MG6Lvwmwjo/Di98PybCOj8OL3w/"),
+"format": 34896670839,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"material": SubResource("StandardMaterial3D_pktcv"),
+"name": "Mat_Paper",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAAAAP//AAD//wAAAAAAAP//AAD//wAAAAAAAAAAAAD/f/+//3//v/9//7//f/+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_nibv4")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h6kus"]
+size = Vector3(0.35717773, 0.13709667, 0.51171875)
+
+[sub_resource type="LabelSettings" id="LabelSettings_1y72w"]
+font_color = Color(0, 0, 0, 1)
+
+[node name="Area3D" type="Area3D" unique_id=490183834 node_paths=PackedStringArray("mesh", "canvas", "canvas_text")]
+collision_layer = 3
+script = ExtResource("1_3oogh")
+item_name = "Bilhete"
+outline_material = ExtResource("2_1y72w")
+mesh = NodePath("Mesh")
+canvas = NodePath("CanvasLayer")
+canvas_text = NodePath("CanvasLayer/Text")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1397397921]
+transform = Transform3D(0.17, 0, 0, 0, 0.17, 0, 0, 0, 0.17, 0.008796394, 0, -0.031012028)
+mesh = SubResource("ArrayMesh_vxb1x")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1913449798]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.013074219, 0.0030952245, -0.040009797)
+shape = SubResource("BoxShape3D_h6kus")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=2111090352]
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer" unique_id=1238913726]
+offset_left = 346.0
+offset_top = 22.0
+offset_right = 905.0
+offset_bottom = 581.0
+texture = ExtResource("3_ungr0")
+expand_mode = 1
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1337486746]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.68235296)
+
+[node name="Text" type="Label" parent="CanvasLayer" unique_id=1446242631]
+offset_left = 395.0
+offset_top = 79.0
+offset_right = 704.0
+offset_bottom = 530.0
+text = "Texto a Aparecer"
+label_settings = SubResource("LabelSettings_1y72w")
+
+[node name="InfText" type="Label" parent="CanvasLayer" unique_id=146836878]
+offset_left = 468.0
+offset_top = 569.0
+offset_right = 640.0
+offset_bottom = 592.0
+text = "Pressione [E] para sair"

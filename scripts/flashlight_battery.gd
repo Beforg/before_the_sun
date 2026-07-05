@@ -12,6 +12,7 @@ extends CollisionObject3D
 func highlight() -> void:
 	# Aplica a borda brilhante por cima do material original
 	if mesh and outline_material:
+		GameManager.display_interact_text("Pressione [E] para coletar Bateria")
 		mesh.material_overlay = outline_material
 		mesh2.material_overlay = outline_material
 		mesh3.material_overlay = outline_material
@@ -22,6 +23,7 @@ func highlight() -> void:
 func unhighlight() -> void:
 	# Remove a borda quando o jogador desvia o olhar
 	if mesh:
+		GameManager.clear_interaction_text()
 		mesh.material_overlay = null
 		mesh2.material_overlay = null
 		mesh3.material_overlay = null
@@ -34,6 +36,7 @@ func interact() -> void:
 	
 	# Aqui você colocará os ifs do GameManager no futuro
 	if item_name == "Bateria" && GameManager.has_free_space():
+		GameManager.display_message("Bateria coletada")
 		GameManager.collect_torch_refill()
 		queue_free()
 	# Destrói o item após coletar

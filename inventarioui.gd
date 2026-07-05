@@ -4,7 +4,8 @@ extends CanvasLayer
 @onready var label_titulo = $ColorRect/VBoxContainer/Label # A Label escrita "Inventario"
 @onready var grid_itens = $ColorRect/VBoxContainer/GridItens
 @onready var grid_chaves = $ColorRect/VBoxContainer/GridChaves
-
+@onready var map = $Map
+@onready var objective_text = $VBoxContainer/ObjectiveText
 # Carrega a cena do quadradinho
 var slot_scene = preload("res://item_slot.tscn")
 
@@ -13,9 +14,12 @@ var tex_cura = preload("res://assets/texture/inv/cure.png")
 var tex_bateria = preload("res://assets/texture/inv/battery.png")
 var tex_adrenalina = preload("res://assets/texture/inv/adr.png")
 var tex_vazio = preload("res://assets/texture/inv/empty.png") # A imagem da moldura vazia
+var tex_gas = preload("res://assets/texture/inv/gas3.png")
+var tex_key = preload("res://assets/texture/inv/key.png")
 
 func _ready() -> void:
 	visible = false 
+	map.visible = false
 	
 	if GameManager.has_signal("inventory_upgraded"):
 		GameManager.inventory_upgraded.connect(_on_inventory_upgraded)
@@ -23,7 +27,7 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("inventario"):
 		visible = !visible 
-		
+			
 		if visible:
 			_update_ui() 
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE 
@@ -32,6 +36,9 @@ func _input(event: InputEvent) -> void:
 
 func _update_ui() -> void:
 	# 1. Atualiza o texto do título para mostrar a capacidade máxima do jogador
+	objective_text = GameManager.objective
+	if GameManager.has_map:
+		map.visible = true
 	label_titulo.text = "Inventário (Máx. " + str(GameManager.max_inventory_slots) + " Itens)"
 
 	# 2. Limpa os dois grids forçando a remoção da árvore
@@ -68,11 +75,12 @@ func _update_ui() -> void:
 	# ---------------------------------------------------------
 	var chaves_desenhadas = 0
 	
-	# Exemplo de como você vai desenhar as chaves quando criar elas:
-	# if GameManager.has_igreja_key:
-	# 	_criar_slot(grid_chaves, tex_chave_igreja, 1)
-	# 	chaves_desenhadas += 1
-		
+	if GameManager.gasoline_count > 0:
+		_criar_slot(grid_chaves,tex_gas, GameManager.gasoline_count)
+		chaves_desenhadas += 1
+	if GameManager.has_gate_key:
+		_criar_slot(grid_chaves,tex_key, chaves_desenhadas)
+		chaves_desenhadas+=1
 	# Preenche o restante para sempre ter exatos 2 quadrados para chaves
 	for i in range(2 - chaves_desenhadas):
 		_criar_slot(grid_chaves, tex_vazio, 0)

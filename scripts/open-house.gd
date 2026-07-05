@@ -12,12 +12,14 @@ var is_open = false
 
 func highlight() -> void:
 	if mesh and outline_material and not is_open:
+		GameManager.display_interact_text("Pressione [E] para Abrir")
 		# Aplica o material na malha visual
 		if mesh is MeshInstance3D:
 			mesh.material_overlay = outline_material
 
 func unhighlight() -> void:
 	if mesh and mesh is MeshInstance3D:
+		GameManager.clear_interaction_text()
 		mesh.material_overlay = null
 
 func interact() -> void:
@@ -27,7 +29,7 @@ func interact() -> void:
 	if GameManager.has_gate_key:
 		_open_gate()
 	else:
-		print("Preciso verificar a igreja primeiro!.")
+		GameManager.display_message("Trancado.")
 
 func _open_gate() -> void:
 	is_open = true
