@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Before the Sun"
-run/main_scene="uid://cxv8gypi85uyl"
+run/main_scene="uid://da2rvodiu31ng"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
