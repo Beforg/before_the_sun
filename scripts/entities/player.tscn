@@ -5,6 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://dehedm8sat58e" path="res://assets/audio/Calm_hearbeat.wav" id="3_qly61"]
 [ext_resource type="AudioStream" uid="uid://buxi36esjpawq" path="res://assets/audio/Scared_heartbeat.wav" id="4_qsoyl"]
 [ext_resource type="PackedScene" uid="uid://c7kef5r3wu4he" path="res://assets/models/player/Untitled.glb" id="4_tjdhl"]
+[ext_resource type="Script" uid="uid://dohsgyvqakklc" path="res://scripts/entities/rain_particles.gd" id="4_tw8y5"]
 [ext_resource type="AudioStream" uid="uid://betx124d7hpeq" path="res://assets/audio/lesiakower-pills-container-shake-455964.mp3" id="5_6nm46"]
 [ext_resource type="PackedScene" uid="uid://f475igo4626m" path="res://assets/models/player/flashlight.glb" id="5_x08pd"]
 [ext_resource type="PackedScene" uid="uid://4mu5pe2d6rxj" path="res://assets/models/hand.glb" id="6_6nm46"]
@@ -20,23 +21,28 @@ height = 2.0472307
 dof_blur_far_enabled = true
 dof_blur_far_distance = 15.0
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qly61"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7vdsa"]
 emission_shape = 3
-emission_box_extents = Vector3(5, 5, 5)
-gravity = Vector3(0, -0.02, 0)
-turbulence_enabled = true
-turbulence_noise_strength = 0.5
+emission_box_extents = Vector3(15, 1, 15)
+direction = Vector3(0, -1, 0)
+spread = 8.0
+initial_velocity_min = 15.0
+initial_velocity_max = 20.0
+collision_mode = 2
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qsoyl"]
-albedo_color = Color(0.24840015, 0.24840018, 0.24840012, 1)
-billboard_mode = 1
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tw8y5"]
+transparency = 1
+albedo_color = Color(0.63018113, 0.7865203, 1, 1)
+billboard_mode = 2
 
-[sub_resource type="QuadMesh" id="QuadMesh_6nm46"]
-material = SubResource("StandardMaterial3D_qsoyl")
-size = Vector2(0.005, 0.005)
+[sub_resource type="QuadMesh" id="QuadMesh_tqewc"]
+material = SubResource("StandardMaterial3D_tw8y5")
+size = Vector2(0.02, 0.2)
 
-[node name="Player" type="CharacterBody3D" unique_id=2087979505]
+[node name="Player" type="CharacterBody3D" unique_id=2087979505 node_paths=PackedStringArray("lanterna_luz")]
 script = ExtResource("1_merdl")
+lanterna_luz = NodePath("Camera3D/SpotLight3D")
+walk_speed = 20.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=411258123]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18566513, 0)
@@ -65,15 +71,17 @@ light_specular = 1.134
 shadow_enabled = true
 shadow_bias = 0.228
 shadow_normal_bias = 1.297
-spot_range = 25.0
+spot_range = 32.0
 spot_angle = 38.42
 spot_angle_attenuation = 0.42044747
 
-[node name="Poeira" type="GPUParticles3D" parent="Camera3D" unique_id=574147393]
-amount = 350
-lifetime = 3.7
-process_material = SubResource("ParticleProcessMaterial_qly61")
-draw_pass_1 = SubResource("QuadMesh_6nm46")
+[node name="RainParticles" type="GPUParticles3D" parent="Camera3D" unique_id=574147393]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.2328606, 0)
+amount = 5000
+lifetime = 1.35
+process_material = SubResource("ParticleProcessMaterial_7vdsa")
+draw_pass_1 = SubResource("QuadMesh_tqewc")
+script = ExtResource("4_tw8y5")
 
 [node name="Hand" parent="Camera3D" unique_id=424483799 instance=ExtResource("4_tjdhl")]
 transform = Transform3D(-0.009641164, 0.0025983178, 0.0005446798, 0.0025863294, 0.00965566, -0.00028133314, -0.0005990232, -0.0001303656, -0.009981189, -0.03842005, -0.28081036, -0.1350298)

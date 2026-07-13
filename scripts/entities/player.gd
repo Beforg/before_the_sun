@@ -1,5 +1,6 @@
 extends CharacterBody3D
 
+@export var lanterna_luz: SpotLight3D
 @export var walk_speed: float = 20.1
 @export var mouse_sensitivity: float = 0.003
 @onready var camera = $Camera3D
@@ -16,14 +17,14 @@ var sway_smoothing := 8.0
 var mouse_delta := Vector2.ZERO
 var hand_initial_rotation := Vector3.ZERO
 var hand_initial_position := Vector3.ZERO # Salva o centro da mão para o balanço
-
+var is_intro_playing: bool = true # Começa travado
 # --- VARIÁVEIS DO HEAD BOBBING ---
 var bob_freq: float = 2.3 # Frequência base
 @export var bob_amp: float = 0.08 
 var t_bob: float = 0.0
 var base_camera_pos: Vector3 
 var light_drain_rate: float = 0.0095
-var light_drain_rate_combat = 0.05
+var light_drain_rate_combat = 0.035
 
 @onready var torch = $Camera3D/SpotLight3D # Sua nova lanterna 3D!
 @onready var heart_low = $HeartbeatLow
@@ -43,10 +44,20 @@ func _ready() -> void:
 	base_camera_pos = camera.position 
 	GameManager.difficulty_increased.connect(_on_difficulty_increased)
 	interact_ray.add_exception(self)
-
+	_setup_intro_fade()
 func _input(event: InputEvent) -> void:
+	if is_intro_playing: 
+		return
 	var item_sound = $UseItem
 	
+	if event.is_action_pressed("toggle_flashlight"):
+		GameManager.is_flashlight_on = not GameManager.is_flashlight_on
+		
+		# Liga ou desliga visualmente a luz
+		if lanterna_luz:
+			lanterna_luz.visible = GameManager.is_flashlight_on
+			
+		# Tocar um som de "Click" aqui
 	if event.is_action_pressed("interagir"):
 		if current_interactable:
 			current_interactable.interact()
@@ -94,34 +105,39 @@ func _physics_process(delta: float) -> void:
 	# --- 1. GESTÃO DE VELOCIDADE E ESTADOS ---
 	if GameManager.is_adrenaline_active:
 		if GameManager.is_addicted:
-			camera.fov = lerp(camera.fov, 120.0, delta * 4.0)
 			speed = walk_speed * 1.15 # Bônus viciado
 			bob_freq = 2.4 # Passos um pouco mais rápidos
 		else:
 			speed = walk_speed * 1.24 # Corrida desesperada
 			bob_freq = 1.8 # Câmera balança muito rápido!
-			camera.fov = lerp(camera.fov, 75.0, delta * 3.0)
+			camera.fov = lerp(camera.fov, 85.0, delta * 3.0)
 	elif GameManager.terror_level >= 50.0:
 		speed = walk_speed * 0.8 # Lento por pânico
 		bob_freq = 1.5 # Passos pesados e arrastados
 	else:
 		speed = walk_speed # Normal
 		bob_freq = 2.4 # Ritmo normal
+		camera.fov = lerp(camera.fov, 75.0, delta * 3.0)
 		
 	# --- 2. DRENO DA LANTERNA ---
 	if torch.light_energy > 0.2:
-		if GameManager.gasoline_count > 0:
+		if GameManager.gasoline_count > 0 and GameManager.is_flashlight_on:
 			torch.light_energy -= light_drain_rate_combat * delta
 			torch.spot_range -= (light_drain_rate_combat * 2.05) * delta
-		else:
+		elif GameManager.is_flashlight_on:
 			torch.light_energy -= light_drain_rate * delta
 			torch.spot_range -= (light_drain_rate * 2.05) * delta
 
 	# --- 3. FÍSICA E MOVIMENTO ---
 	if not is_on_floor():
 		velocity.y -= 9.8 * delta
+	var input_dir = Vector2.ZERO
+	if is_intro_playing:
+		input_dir = Vector2(0, -1) # Força o analógico para a frente!
+		speed = walk_speed * 0.35 # Caminhada mais lenta e dramática
+	else:
+		input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 
-	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
 	if direction:
@@ -232,3 +248,25 @@ func _check_interaction() -> void:
 		if current_interactable:
 			current_interactable.unhighlight()
 			current_interactable = null
+func _setup_intro_fade() -> void:
+	# 1. Cria a Tela Preta via código 
+	var canvas = CanvasLayer.new()
+	canvas.layer = 100 # Fica por cima da UI
+	add_child(canvas)
+
+	var fade_rect = ColorRect.new()
+	fade_rect.color = Color.BLACK
+	fade_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	canvas.add_child(fade_rect)
+
+	# 2. Anima a tela sumindo (Fade Out do preto)
+	var tween = create_tween()
+	tween.tween_interval(3.5) # Espera meio segundo no escuro para a engine carregar os modelos e texturas
+	tween.tween_property(fade_rect, "modulate:a", 0.0, 3) # O Fade leva 2.5 segundos
+
+	# 3. Quando a animação terminar, libera o jogador!
+	tween.tween_callback(func(): 
+		is_intro_playing = false
+		canvas.queue_free() # Destrói a tela preta para não pesar na RAM
+		print("DIRETOR: Fade terminado, jogador livre!")
+	)

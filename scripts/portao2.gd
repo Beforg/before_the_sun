@@ -18,8 +18,9 @@ func highlight() -> void:
 			mesh.material_overlay = outline_material
 
 func unhighlight() -> void:
+	GameManager.clear_interaction_text()
 	if mesh and mesh is MeshInstance3D:
-		GameManager.clear_interaction_text()
+		
 		mesh.material_overlay = null
 
 func interact() -> void:

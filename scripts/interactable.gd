@@ -20,8 +20,12 @@ func highlight() -> void:
 		GameManager.display_interact_text("Pressione [E] para coletar Chave")
 	elif item_name == "map":
 		GameManager.display_interact_text("Pressione [E] para coletar Mapa")
+	elif item_name == "door_key":
+		GameManager.display_interact_text("Pressione [E] para coletar Chave da Casa")
 	elif item_name == "Bilhete":
 		GameManager.display_interact_text("Pressione [E] para coletar Anotacao")
+	elif item_name == "toy":
+		GameManager.display_interact_text("Pressione [E] para coletar Colecionável")
 	if mesh and outline_material:
 		mesh.material_overlay = outline_material
 
@@ -33,15 +37,23 @@ func unhighlight() -> void:
 
 func interact() -> void:
 	print("Coletou: ", item_name)
-	
+	GameManager.clear_interaction_text()
 	# Aqui você colocará os ifs do GameManager no futuro
 	if item_name == "Chave do Portao":
 		GameManager.has_gate_key = true
 		GameManager.display_message("Chave coletada")
 		queue_free()
+	elif item_name == "door_key":
+		GameManager.has_door_key = true
+		GameManager.display_message("Chave da Casa coletada")
+		queue_free()
 	elif item_name == "p1_act1":
 		GameManager.display_message("Chave coletada")
 		GameManager.has_gate_key = true # trocar dps
+		queue_free()
+	elif item_name == "toy":
+		GameManager.toy_count += 1
+		GameManager.display_message("Colecionável coletado: "+str(GameManager.toy_count)+"/3")
 		queue_free()
 	elif item_name == "map":
 		GameManager.display_message("Mapa coletado")

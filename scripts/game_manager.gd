@@ -3,16 +3,16 @@ extends Node
 signal monster_awakened
 signal difficulty_increased(level)
 signal spawn_second_monster 
-
 # Variáveis básicas
-var gasoline_count: int = 0
+var gasoline_count: int = 7
 var dollars: int = 0
 var adrenaline_count: int = 0
 var torch_refills: int = 0
 var terror_level: float = 0.0
 var cures_count: int = 0
 const MAX_TERROR: float = 100.0
-
+var is_flashlight_on: bool = true
+var storm_multiplier: float = 1.0
 # Sistema de Vício
 var is_addicted: bool = false
 var adrenaline_time_left: float = 0.0
@@ -21,8 +21,12 @@ var adrenaline_use_history: Array = []
 var adrenaline_upgrade_level: int = 0
 var objective: String = "Explore a estrada"
 var bilhete_count = 0
+var toy_count = 0
+var is_final_act = false;
 # itens chave:
 var has_gate_key: bool = false;
+var has_go_to_act2_key: bool = false;
+var has_door_key: bool = false;
 var has_map: bool = false;
 # --- SINAIS DO HUD ---
 signal show_informative_text(texto: String)
@@ -114,7 +118,11 @@ func reset_game():
 	
 func _process(delta: float) -> void:
 	# 1. Dreno do Terror
-	if terror_level > 0:
+	if not is_flashlight_on and gasoline_count >= 1:
+		var additional = (gasoline_count / 2.5)
+		terror_level += (1.0 * delta) + additional
+		terror_level = clamp(terror_level, 0.0, 100.0)
+	elif terror_level > 0:
 		terror_level -= 2 * delta
 	terror_level = clamp(terror_level, 0.0, MAX_TERROR)
 	

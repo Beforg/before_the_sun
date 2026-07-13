@@ -26,7 +26,7 @@ func interact() -> void:
 	if is_open:
 		return 
 		
-	if GameManager.has_gate_key:
+	if GameManager.has_door_key:
 		_open_gate()
 	else:
 		GameManager.display_message("Trancado.")
@@ -34,10 +34,17 @@ func interact() -> void:
 func _open_gate() -> void:
 	is_open = true
 	unhighlight() 
-	print("O Portão foi destrancado!")
-	
+	print("A porta foi destrancada!")
+	GameManager.has_door_key = false
 	var tween = create_tween()
-	var posicao_final_aberta = Vector3(0.565, 5.001, 3.492) 
-	tween.tween_property(pivot, "position", posicao_final_aberta, 0.1).set_trans(Tween.TRANS_SINE)
-	# Gira o "avô" (nó Portao) 90 graus no eixo Y
-	tween.tween_property(pivot, "rotation_degrees:y", 90.0, 1.0).set_trans(Tween.TRANS_SINE)
+	tween.set_parallel(true)
+	
+	var posicao_final_aberta = Vector3(-140, 0, -46.237) 
+	
+	# 2. O TEMPO: Defina um tempo maior (ex: 1.5 segundos) para o movimento ser visível e suave
+	var tempo_de_abertura = 0.5
+	
+	# Move e Gira o portão de forma sincronizada
+	tween.tween_property(pivot, "position", posicao_final_aberta, tempo_de_abertura).set_trans(Tween.TRANS_SINE)
+	tween.tween_property(pivot, "rotation_degrees:y", -115.2, 0.45).set_trans(Tween.TRANS_SINE)
+	

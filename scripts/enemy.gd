@@ -17,7 +17,7 @@ var is_active: bool = false
 @export var stalk_speed: float = 2.2 
 @export var hunt_speed: float = 4.6
 @export var base_light_energy: float = 7.0
-
+var fake_charge_limit_timer := 0.0
 # --- VARIÁVEIS DE COMPORTAMENTO ---
 var circle_direction: int = 1 
 var stalk_offset_target := Vector3.ZERO
@@ -26,7 +26,6 @@ var stalk_update_rate := 3.5
 var is_stunned_by_light := false
 var stun_timer := 0.0
 var is_performing_action := false 
-
 # --- VARIÁVEIS DE INVESTIGAÇÃO, MEMÓRIA E ATAQUE ---
 var fake_charge_cooldown := 0.0
 var escape_grace_period := 0.0 
@@ -77,8 +76,31 @@ func _physics_process(delta: float) -> void:
 		var light = player.torch.light_energy
 		var distance = global_position.distance_to(player.global_position)
 		
+		# --- 0. PUNIÇÃO DA ESCURIDÃO (LOUCURA MÁXIMA) ---
+		if not GameManager.is_flashlight_on and GameManager.terror_level >= 90.0:
+			print("DIRETOR: Jogador enlouqueceu no escuro! Morte instantânea.")
+			
+			# 1. Calcula a posição exatamente na frente do rosto do jogador
+			var player_forward_punish = -player.camera.global_transform.basis.z.normalized()
+			var in_front_of_player = player.global_position + (player_forward_punish * 1.3)
+			
+			# 2. Mantém a altura correta para o monstro não flutuar ou afundar
+			in_front_of_player.y = player.global_position.y
+			
+			# 3. Teleporta o monstro e força ele a olhar no fundo dos olhos do jogador!
+			global_position = in_front_of_player
+			_look_at_target(player.global_position)
+			
+			# 4. Executa a animação de morte letal
+			_execute_lethal_attack()
+			return
+		
 		# --- 1. O SISTEMA DE ATAQUE (LETAL VS NÃO LETAL) ---
-		if distance <= 3.2 and current_state != State.FAKE_CHARGE:
+		var attack_range = 3.2
+		if not GameManager.is_flashlight_on:
+			attack_range = 1.5 # No escuro, ele só te pega se você esbarrar nele!
+
+		if distance <= attack_range and current_state != State.FAKE_CHARGE:
 			
 			if current_state == State.INTRO_WALK:
 				# A CORREÇÃO: Aumentamos o gatilho para 2.8 metros! 
@@ -116,6 +138,11 @@ func _physics_process(delta: float) -> void:
 		var dir_to_monster = player.global_position.direction_to(global_position).normalized()
 		
 		var has_los = _has_line_of_sight()
+		
+		# >>> INJEÇÃO DA CEGUEIRA <<<
+		if not GameManager.is_flashlight_on:
+			has_los = false # O monstro perde totalmente a sua silhueta no escuro
+			
 		var is_looking_angle = player_forward.dot(dir_to_monster) > 0.70
 		var is_player_looking = is_looking_angle and has_los
 		
@@ -187,7 +214,7 @@ func _update_monster_state(light: float, distance: float, is_player_looking: boo
 	# NOVA REGRA: SISTEMA DE "RUBBER BANDING" (Corda Elástica)
 	# Nunca deixa o jogador ficar em paz. Se ele fugir para muito longe
 	# e não estiver olhando, o monstro reseta a posição ao redor dele!
-	if distance > 28.0 and not is_player_looking:
+	if distance > 45.0 and not is_player_looking:
 		teleport_to_flank_position()
 		current_state = State.STALKING
 		return
@@ -205,6 +232,7 @@ func _update_monster_state(light: float, distance: float, is_player_looking: boo
 		if randf() < 0.004: 
 			current_state = State.FAKE_CHARGE
 			fake_charge_cooldown = 25.0 
+			fake_charge_limit_timer = 0.0 
 			return
 			
 	if current_state == State.STALKING and distance > 18.0 and observe_timer <= 0.0:
@@ -226,6 +254,8 @@ func _update_monster_state(light: float, distance: float, is_player_looking: boo
 
 	if light > 5.5 and distance < 15.0 and is_player_looking:
 		current_state = State.HIDDEN
+	elif not GameManager.is_flashlight_on:
+		current_state = State.STALKING # No escuro, ele perde o alvo e volta a rondar as cegas!
 	elif light > 2.0:
 		current_state = State.STALKING
 	else:
@@ -320,7 +350,7 @@ func _process_hidden_behavior(delta: float) -> void:
 	move_and_slide()
 	
 	var distance = global_position.distance_to(player.global_position)
-	if distance > 20.0:
+	if distance > 35:
 		teleport_to_flank_position()
 		current_state = State.STALKING
 
@@ -363,7 +393,7 @@ func _process_hunting_behavior(delta: float, distance: float) -> void:
 	var is_looking_angle = player_forward.dot(dir_to_monster) > 0.4
 	var is_player_looking_now = is_looking_angle and _has_line_of_sight()
 	
-	if distance > 20.0 and not is_player_looking_now:
+	if distance > 45.0 and not is_player_looking_now:
 		teleport_to_flank_position()
 		return
 		
@@ -382,15 +412,26 @@ func _process_fake_charge_behavior(delta: float, distance: float) -> void:
 	anim_player.play("mixamo_com_007")
 	pivot.visible = true
 	
+	# 1. NOVO: TEMPO LIMITE (Se não chegar no jogador em 4s, ele some!)
+	fake_charge_limit_timer += delta
+	if fake_charge_limit_timer > 4.0:
+		print("DIRETOR: Fake Charge demorou demais e foi abortado.")
+		escape_grace_period = 5.0 # Dá 5 segundos de paz pro jogador
+		current_state = State.HIDDEN
+		return
+	
+	# 2. GATILHO DO SUSTO (Chegou perto o suficiente)
 	if distance <= 4.8:
 		GameManager.terror_level = min(100.0, GameManager.terror_level + 15.0)
 		escape_grace_period = 8.0 
 		current_state = State.HIDDEN
 		return
 		
-	var dir = global_position.direction_to(player.global_position)
+	# 3. CORRIGIDO: Agora usa o NavMesh para não bater nas paredes!
+	nav_agent.target_position = player.global_position
+	var next_path_pos = nav_agent.get_next_path_position()
+	var dir = global_position.direction_to(next_path_pos).normalized()
 	dir.y = 0
-	dir = dir.normalized()
 	
 	var sprint_speed = hunt_speed * 1.8
 	velocity.x = dir.x * sprint_speed
@@ -398,7 +439,6 @@ func _process_fake_charge_behavior(delta: float, distance: float) -> void:
 	
 	_look_at_target(player.global_position)
 	move_and_slide()
-
 # --- AUXILIARES E RAYCAST ---
 
 func _has_line_of_sight() -> bool:
@@ -428,29 +468,29 @@ func teleport_to_flank_position() -> void:
 	var cam_basis = player.camera.global_transform.basis
 	
 	if random_choice < 0.20:
-		# 20% DE CHANCE: FRENTE (Muito longe e ligeiramente para os lados)
+		# 20% DE CHANCE: FRENTE (Aumentado de 18~24 para 26~35 metros)
 		var player_forward = -cam_basis.z.normalized()
 		var angle_offset = randf_range(PI/8, PI/4) # Desvia a rota para não nascer no centro da tela
 		if randf() > 0.5: angle_offset *= -1
 		
 		var spawn_dir = player_forward.rotated(Vector3.UP, angle_offset).normalized()
-		desired_pos = player.global_position + (spawn_dir * randf_range(18.0, 24.0))
+		desired_pos = player.global_position + (spawn_dir * randf_range(26.0, 35.0))
 		
 	elif random_choice < 0.60:
-		# 40% DE CHANCE: FLANCOS LATERAIS (Esquerda ou Direita)
+		# 40% DE CHANCE: FLANCOS LATERAIS (Aumentado de 12~16 para 20~28 metros)
 		var player_right = cam_basis.x.normalized()
 		var side_dir = player_right if randf() > 0.5 else -player_right # Escolhe um dos lados
 		
 		var angle_variation = randf_range(-PI/6, PI/6) # Dá uma leve angulada para frente ou para trás
 		var spawn_dir = side_dir.rotated(Vector3.UP, angle_variation).normalized()
-		desired_pos = player.global_position + (spawn_dir * randf_range(12.0, 16.0))
+		desired_pos = player.global_position + (spawn_dir * randf_range(20.0, 28.0))
 		
 	else:
-		# 40% DE CHANCE: COSTAS (Perto para pressão imediata)
+		# 40% DE CHANCE: COSTAS (Aumentado de 9~14 para 18~24 metros)
 		var player_back = cam_basis.z.normalized()
 		var angle_variation = randf_range(-PI/3, PI/3)
 		var spawn_dir = player_back.rotated(Vector3.UP, angle_variation).normalized()
-		desired_pos = player.global_position + (spawn_dir * randf_range(9.0, 14.0))
+		desired_pos = player.global_position + (spawn_dir * randf_range(18.0, 24.0))
 		
 	# Nasce acima do jogador para cair no chão e não dentro do morro
 	desired_pos.y = player.global_position.y + 3.0 
@@ -458,12 +498,15 @@ func teleport_to_flank_position() -> void:
 	var map = get_world_3d().get_navigation_map()
 	var safe_pos = NavigationServer3D.map_get_closest_point(map, desired_pos)
 	
-	if safe_pos != Vector3.ZERO:
+	# Prevenção extra: garante que o NavigationServer não empurre o monstro para
+	# cima do jogador caso o ponto caia fora do mapa!
+	if safe_pos != Vector3.ZERO and safe_pos.distance_to(player.global_position) > 12.0:
 		global_position = safe_pos
 	else:
 		global_position = desired_pos
 		
 	stalk_offset_target = Vector3.ZERO
+	
 func _process_terror_aura(delta: float) -> void:
 	var bodies = terror_aura.get_overlapping_bodies()
 	for body in bodies:
