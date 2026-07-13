@@ -29,6 +29,8 @@
 [ext_resource type="Texture2D" uid="uid://b6gx65jagtudj" path="res://assets/models/act1/houses/urban_building_25.png" id="26_n333l"]
 [ext_resource type="Texture2D" uid="uid://cj33kdjk1x0o4" path="res://assets/models/act1/houses/urban_building_26.png" id="27_og5q4"]
 [ext_resource type="Texture2D" uid="uid://d4dbwjn1bca32" path="res://assets/models/act1/houses/urban_building_27.png" id="28_khjjr"]
+[ext_resource type="AudioStream" uid="uid://4pr2hv74mv0t" path="res://assets/audio/open_dor.mp3" id="30_4g6sa"]
+[ext_resource type="AudioStream" uid="uid://d2qiywnesk0i0" path="res://assets/audio/door_locked.mp3" id="31_32f17"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wqskx"]
 resource_name = "material"
@@ -2482,9 +2484,11 @@ transform = Transform3D(0.94707584, -6.404349e-09, 0.3210093, 1.936974e-09, 0.99
 layers = 2
 mesh = SubResource("ArrayMesh_bbdxi")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Sketchfab_model/6d00ad905951472989ed60bd3d15cf71_fbx/RootNode/building3/doorplates/doorjam/Node3D/door/door_Mat_0" unique_id=372709218]
+[node name="StaticBody3D" type="StaticBody3D" parent="Sketchfab_model/6d00ad905951472989ed60bd3d15cf71_fbx/RootNode/building3/doorplates/doorjam/Node3D/door/door_Mat_0" unique_id=372709218 node_paths=PackedStringArray("locked_sound", "open_sound")]
 collision_layer = 2
 script = ExtResource("6_5ykjq")
+locked_sound = NodePath("../../../../../../../../../../Locked")
+open_sound = NodePath("../../../../../../../../../../Open")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Sketchfab_model/6d00ad905951472989ed60bd3d15cf71_fbx/RootNode/building3/doorplates/doorjam/Node3D/door/door_Mat_0/StaticBody3D" unique_id=1462419480]
 shape = SubResource("ConcavePolygonShape3D_5ykjq")
@@ -2798,3 +2802,9 @@ size = Vector3(405.21167, 12.07373, 315.28253)
 [node name="GPUParticlesCollisionBox3D2" type="GPUParticlesCollisionBox3D" parent="." unique_id=1453234882]
 transform = Transform3D(1, 0, 3.7252903e-09, 0, 0.99995387, 0, -3.7252903e-09, 0, 1, 383.6208, 269.88193, -301.8735)
 size = Vector3(64.33209, 12.07373, 56.864677)
+
+[node name="Open" type="AudioStreamPlayer3D" parent="." unique_id=855677225]
+stream = ExtResource("30_4g6sa")
+
+[node name="Locked" type="AudioStreamPlayer3D" parent="." unique_id=1372493540]
+stream = ExtResource("31_32f17")

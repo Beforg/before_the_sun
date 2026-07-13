@@ -6,7 +6,7 @@ enum UpgradeType { INVENTORY, ADRENALINE }
 @export var mesh: MeshInstance3D;
 @export var type: UpgradeType = UpgradeType.INVENTORY
 @export var upgrade_amount: int = 2 # Pode dar +2 slots ou +50 estamina, dependendo do tipo
-
+@export var sound: AudioStreamPlayer3D
 # --- SE VOCÊ USA O SEU INTERACT_RAY PARA CLICAR E PEGAR ---
 func highlight() -> void:
 	# Aplica a borda brilhante por cima do material original
@@ -33,4 +33,7 @@ func _apply_upgrade() -> void:
 		GameManager.display_message("Upgrade coletado. +3 segundos de efeito da Adrenalina.")
 		
 	# Toca um som de coleta global aqui se tiver
+	sound.play()
+	mesh.visible = false
+	await sound.finished
 	queue_free() # Destrói o item do mundo

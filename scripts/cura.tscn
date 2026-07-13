@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b2lkt41i0i37p" path="res://scripts/cura.gd" id="1_xe0vs"]
 [ext_resource type="Material" uid="uid://ckfqdsnchwg50" path="res://assets/models/items/outline_mat_cura.tres" id="2_31stv"]
-[ext_resource type="AudioStream" uid="uid://dek6hgqu8gcvo" path="res://assets/audio/collect.mp3" id="3_7ph48"]
+[ext_resource type="AudioStream" uid="uid://cbiu5t4imlnem" path="res://assets/audio/item_collect.mp3" id="3_31stv"]
 [ext_resource type="Texture2D" uid="uid://dhnu0w5qiigry" path="res://assets/models/items/pills_0.png" id="3_78yo8"]
 [ext_resource type="Texture2D" uid="uid://ctfcnmo0cxg4j" path="res://assets/models/items/pills_1.png" id="4_31stv"]
 [ext_resource type="Texture2D" uid="uid://cdyyh76ej8yjt" path="res://assets/models/items/pills_2.png" id="5_bn4hn"]
@@ -55,17 +55,18 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_wnnc0")
 
-[node name="Cura" type="Area3D" unique_id=1751349162]
+[node name="Cura" type="Area3D" unique_id=1751349162 node_paths=PackedStringArray("collision")]
 collision_layer = 2
 script = ExtResource("1_xe0vs")
 outline_material = ExtResource("2_31stv")
+collision = NodePath("CollisionShape3D")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=43907475]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.004348755, 0.029449463, -0.016235352)
 shape = SubResource("BoxShape3D_mad0u")
 
 [node name="CollectSound" type="AudioStreamPlayer3D" parent="." unique_id=1128460129]
-stream = ExtResource("3_7ph48")
+stream = ExtResource("3_31stv")
 
 [node name="Visual" type="Node3D" parent="." unique_id=2082304859]
 

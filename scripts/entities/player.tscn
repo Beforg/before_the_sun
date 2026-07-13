@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://cdk2py6ukymlf" path="res://assets/models/flashlight.glb" id="7_i623q"]
 [ext_resource type="AudioStream" uid="uid://c5l86fw1utf3q" path="res://assets/audio/walk.mp3" id="8_i623q"]
 [ext_resource type="PackedScene" uid="uid://3lk5xnoa6btv" path="res://inventarioui.tscn" id="11_7vdsa"]
+[ext_resource type="VideoStream" uid="uid://dlw2v1u4upyb3" path="res://assets/video/cutscene_ato1.ogv" id="13_tqewc"]
+[ext_resource type="AudioStream" uid="uid://j3uyqcp80adr" path="res://assets/audio/toggle_button.mp3" id="14_1jg44"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tcf2h"]
 radius = 0.44726563
@@ -39,10 +41,55 @@ billboard_mode = 2
 material = SubResource("StandardMaterial3D_tw8y5")
 size = Vector2(0.02, 0.2)
 
-[node name="Player" type="CharacterBody3D" unique_id=2087979505 node_paths=PackedStringArray("lanterna_luz")]
+[sub_resource type="LabelSettings" id="LabelSettings_tqewc"]
+font_size = 20
+font_color = Color(0.92156863, 0.92156863, 0.1254902, 1)
+
+[sub_resource type="Animation" id="Animation_tqewc"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LegendaLabel:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["Já faz um ano, trezentos e sessenta e cinco dias de absoluto silêncio."]
+}
+
+[sub_resource type="Animation" id="Animation_1jg44"]
+resource_name = "falas_ato1"
+length = 94.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LegendaLabel:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.12, 6.99, 13, 19, 25, 27.961782, 34, 41, 48, 54, 60, 66, 74, 78),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": ["Já faz um ano, trezentos e sessenta e cinco dias de absoluto silêncio.", "O departamento... meus velhos amigos da força... eles pararam de procurar meses atrás.", "Eles me disseram que as pessoas simplesmente vão embora às vezes. Que ela queria uma vida nova.", "Mas eu conheço a Helena. Ela nunca iria embora sem dizer uma palavra.
+", "Não depois... não depois do que aconteceu com a Chloe.", "Perder nossa garotinha... quebrou algo dentro de nós. Algo que não podia ser consertado.", "Aquela casa de campo costumava ser nosso santuário. Mas depois que a água a levou... tornou-se apenas um túmulo.", "Eu falhei em proteger minha própria filha e beber... era o único lugar onde o silêncio não doía.", "Eu sei que afastei a Helena. Eu sei que a estava arrastando para a escuridão comigo.", "Eu honestamente achei que ela tivesse desaparecido porque não suportava mais olhar para mim... e quem poderia culpá-la?
+", "Mas então... esta noite, meu celular ligou... uma mensagem do número dela.", "Vincent...? se você receber isso... por favor... eu não tenho muito tempo. Eles me acharam. ", "Eu tive que fugir. procure na Montanha North Ridge... na Casa Ashwood. Você precisa se apressar... por favor... me encontre!\"", ""]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gclof"]
+_data = {
+&"RESET": SubResource("Animation_tqewc"),
+&"falas_ato1": SubResource("Animation_1jg44")
+}
+
+[node name="Player" type="CharacterBody3D" unique_id=2087979505 node_paths=PackedStringArray("lanterna_luz", "video_intro", "subtitle_animator")]
 script = ExtResource("1_merdl")
 lanterna_luz = NodePath("Camera3D/SpotLight3D")
 walk_speed = 20.0
+video_intro = NodePath("CutsceneLayer/VideoStreamPlayer")
+subtitle_animator = NodePath("CutsceneLayer/AnimadorLegendas")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=411258123]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18566513, 0)
@@ -116,3 +163,40 @@ stream = ExtResource("5_6nm46")
 stream = ExtResource("8_i623q")
 
 [node name="CanvasLayer" parent="." unique_id=930240575 instance=ExtResource("11_7vdsa")]
+
+[node name="CutsceneLayer" type="CanvasLayer" parent="." unique_id=207639005]
+layer = 105
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="CutsceneLayer" unique_id=152263467]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stream = ExtResource("13_tqewc")
+autoplay = true
+expand = true
+
+[node name="LegendaLabel" type="Label" parent="CutsceneLayer" unique_id=1948685808]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 135.0
+offset_top = -134.0
+offset_right = -130.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Já faz um ano, trezentos e sessenta e cinco dias de absoluto silêncio."
+label_settings = SubResource("LabelSettings_tqewc")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+autowrap_trim_flags = 128
+clip_text = true
+
+[node name="AnimadorLegendas" type="AnimationPlayer" parent="CutsceneLayer" unique_id=175728624]
+libraries/ = SubResource("AnimationLibrary_gclof")
+
+[node name="ToggleFlashlight" type="AudioStreamPlayer" parent="." unique_id=1254291534]
+stream = ExtResource("14_1jg44")

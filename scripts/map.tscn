@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dcir6wmoirneb" path="res://assets/texture/map_1.png" id="4_nye3d"]
 [ext_resource type="Texture2D" uid="uid://cmoindv2ugu6f" path="res://assets/texture/map_2.png" id="5_suokn"]
 [ext_resource type="Texture2D" uid="uid://b8qahqc210myj" path="res://assets/texture/map_gas.png" id="6_r8ylp"]
+[ext_resource type="AudioStream" uid="uid://dek6hgqu8gcvo" path="res://assets/audio/collect.mp3" id="7_v4urg"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_irj3t"]
 resource_name = "material"
@@ -59,12 +60,13 @@ albedo_texture = ExtResource("6_r8ylp")
 [sub_resource type="BoxShape3D" id="BoxShape3D_vib5n"]
 size = Vector3(1, 0.3935547, 1.1982422)
 
-[node name="Map" type="Area3D" unique_id=2032403796 node_paths=PackedStringArray("mesh")]
+[node name="Map" type="Area3D" unique_id=2032403796 node_paths=PackedStringArray("mesh", "collect_sound")]
 collision_layer = 2
 script = ExtResource("1_xau04")
 item_name = "map"
 outline_material = ExtResource("2_xau04")
 mesh = NodePath("map")
+collect_sound = NodePath("AudioStreamPlayer3D")
 
 [node name="map" type="MeshInstance3D" parent="." unique_id=1384906304]
 transform = Transform3D(0.19997624, 2.3588655e-08, 0.0030834319, -0.0030834319, -3.2848842e-08, 0.19997624, 2.4092333e-08, -0.2, -3.2481267e-08, 0.18225795, 0.06454879, -0.06385863)
@@ -74,3 +76,6 @@ surface_material_override/0 = SubResource("StandardMaterial3D_fu8rv")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=412106961]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.30322266, -0.03857422)
 shape = SubResource("BoxShape3D_vib5n")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=210819821]
+stream = ExtResource("7_v4urg")

@@ -6,8 +6,11 @@ extends CollisionObject3D # Funciona tanto para Area3D quanto para StaticBody3D
 @export var canvas: CanvasLayer = null
 @export var canvas_text: Label = null
 @export var texto_bilhete: String
+@export var collect_sound: AudioStreamPlayer3D
+
 var is_reading: bool = false
 var can_close: bool = false
+
 func _ready() -> void:
 	if canvas != null:
 		canvas.visible = false
@@ -23,9 +26,10 @@ func highlight() -> void:
 	elif item_name == "door_key":
 		GameManager.display_interact_text("Pressione [E] para coletar Chave da Casa")
 	elif item_name == "Bilhete":
-		GameManager.display_interact_text("Pressione [E] para coletar Anotacao")
+		GameManager.display_interact_text("Pressione [E] para ler Anotação")
 	elif item_name == "toy":
 		GameManager.display_interact_text("Pressione [E] para coletar Colecionável")
+		
 	if mesh and outline_material:
 		mesh.material_overlay = outline_material
 
@@ -37,57 +41,75 @@ func unhighlight() -> void:
 
 func interact() -> void:
 	print("Coletou: ", item_name)
-	GameManager.clear_interaction_text()
-	# Aqui você colocará os ifs do GameManager no futuro
+	
+	# ==========================================
+	# 1. AÇÃO IMEDIATA (Serve para TODOS os itens)
+	# ==========================================
+	unhighlight() # Remove o brilho e o texto da tela na hora
+	
+	if mesh:
+		mesh.visible = false # Esconde a malha diretamente
+		
+	# Desativa a colisão com segurança (evita erros da engine de física)
+	$CollisionShape3D.set_deferred("disabled", true)
+	
+	if collect_sound != null:
+		collect_sound.play()
+		
+	# ==========================================
+	# 2. LÓGICA ESPECÍFICA DE CADA ITEM
+	# ==========================================
 	if item_name == "Chave do Portao":
 		GameManager.has_gate_key = true
 		GameManager.display_message("Chave coletada")
+		if collect_sound: await collect_sound.finished
 		queue_free()
+		
 	elif item_name == "door_key":
 		GameManager.has_door_key = true
 		GameManager.display_message("Chave da Casa coletada")
+		if collect_sound: await collect_sound.finished
 		queue_free()
+		
 	elif item_name == "p1_act1":
 		GameManager.display_message("Chave coletada")
-		GameManager.has_gate_key = true # trocar dps
+		GameManager.has_gate_key = true 
+		if collect_sound: await collect_sound.finished
 		queue_free()
+		
 	elif item_name == "toy":
 		GameManager.toy_count += 1
 		GameManager.display_message("Colecionável coletado: "+str(GameManager.toy_count)+"/3")
+		if collect_sound: await collect_sound.finished
 		queue_free()
+		
 	elif item_name == "map":
 		GameManager.display_message("Mapa coletado")
 		GameManager._collect_map()
+		if collect_sound: await collect_sound.finished
 		queue_free()
+		
 	elif item_name == "Bilhete":
 		if canvas != null:
-			# 1. Abre a interface
+			# O item já ficou invisível e sem colisão lá em cima!
+			# Agora só precisamos cuidar da interface da leitura:
 			canvas.visible = true
 			canvas_text.text = texto_bilhete
 			GameManager._collect_bilhete()
 			
-			# 2. Esconde o item do mundo real e remove a borda
-			if mesh:
-				mesh.visible = false
-				mesh.material_overlay = null
-				
-			# 3. Desativa a colisão para o raio não bater mais nele
-			$CollisionShape3D.disabled = true
-			GameManager.clear_interaction_text()
-			
-			# 4. Trava o jogador na leitura
 			is_reading = true
 			
 			# Um pequeno atraso para o jogador não fechar a tela sem querer 
 			# com o mesmo clique duplo rápido que usou para abrir
 			await get_tree().create_timer(0.5).timeout
 			can_close = true
-
+	
 # A função nativa que escuta os teclados a todo momento
 func _input(event: InputEvent) -> void:
 	# Se o jogador estiver lendo, puder fechar, e apertar a tecla "E" (troque para a sua ação)
 	if is_reading and can_close and event.is_action_pressed("interagir"):
 		canvas.visible = false
+		is_reading = false # É sempre bom desligar a variável
 		
 		# AGORA SIM, o jogador terminou de ler, podemos mandar o item para o ralo!
 		queue_free()

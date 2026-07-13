@@ -78,7 +78,7 @@ func _update_ui() -> void:
 	if GameManager.gasoline_count > 0:
 		_criar_slot(grid_chaves,tex_gas, GameManager.gasoline_count)
 		chaves_desenhadas += 1
-	if GameManager.has_gate_key:
+	if GameManager.has_gate_key || GameManager.has_door_key:
 		_criar_slot(grid_chaves,tex_key, chaves_desenhadas)
 		chaves_desenhadas+=1
 	# Preenche o restante para sempre ter exatos 2 quadrados para chaves
