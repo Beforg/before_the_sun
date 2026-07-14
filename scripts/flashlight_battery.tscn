@@ -1,8 +1,8 @@
 [gd_scene format=4 uid="uid://dwaj0rph4qf21"]
 
 [ext_resource type="Script" uid="uid://cb4y6c6d63rh8" path="res://scripts/flashlight_battery.gd" id="1_8v132"]
-[ext_resource type="AudioStream" uid="uid://dek6hgqu8gcvo" path="res://assets/audio/collect.mp3" id="2_6uj15"]
 [ext_resource type="Material" uid="uid://ifs7godbs2rq" path="res://assets/models/items/outline_mat_collectible_bateria.tres" id="2_xbqq1"]
+[ext_resource type="AudioStream" uid="uid://cbiu5t4imlnem" path="res://assets/audio/item_collect.mp3" id="3_xbqq1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vowls"]
 resource_name = "material"
@@ -130,11 +130,13 @@ shadow_mesh = SubResource("ArrayMesh_xb00n")
 [sub_resource type="BoxShape3D" id="BoxShape3D_mad0u"]
 size = Vector3(0.21072388, 0.3857422, 0.3294983)
 
-[node name="FlashlightBattery" type="Area3D" unique_id=2083858076]
+[node name="FlashlightBattery" type="Area3D" unique_id=2083858076 node_paths=PackedStringArray("sound", "collision")]
 transform = Transform3D(0.9810099, 0.1874818, -0.04970031, -0.18728925, 0.9822676, 0.008545136, 0.050421063, 0.00092547876, 0.9987276, 0, 0, 0)
 collision_layer = 2
 script = ExtResource("1_8v132")
 outline_material = ExtResource("2_xbqq1")
+sound = NodePath("CollectSound")
+collision = NodePath("CollisionShape3D")
 
 [node name="Battery" type="Node3D" parent="." unique_id=1709158244]
 transform = Transform3D(0.976836, -0.21395816, 0.0036084428, 0.21398646, 0.97661036, -0.021009656, 0.0009711459, 0.021295145, 0.99977267, -0.5928145, 3.109108, 0.02704734)
@@ -169,6 +171,6 @@ shape = SubResource("BoxShape3D_mad0u")
 
 [node name="CollectSound" type="AudioStreamPlayer3D" parent="." unique_id=1366966947]
 transform = Transform3D(1, -6.7957444e-09, 0, -7.246854e-09, 1, -7.799827e-09, 0, 2.3283064e-10, 1, 0.07022646, 0.059967846, -0.04037316)
-stream = ExtResource("2_6uj15")
+stream = ExtResource("3_xbqq1")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

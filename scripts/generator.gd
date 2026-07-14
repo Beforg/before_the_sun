@@ -31,7 +31,7 @@ func interact() -> void:
 	if is_activated:
 		return 
 		
-	if GameManager.gasoline_count >= 10:
+	if GameManager.gasoline_count >= 7:
 		_activate_generator()
 	else:
 		GameManager.display_message("Gasolina insuficiente.")

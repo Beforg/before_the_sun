@@ -6,6 +6,7 @@ extends Node3D
 @export var sunrise_duration: float = 60.0 
 
 func _ready() -> void:
+	GameManager.is_final_act = true
 	_setup_night()
 	
 	# Aguarda 2 segundos após o início do Ato 3 para começar

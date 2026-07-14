@@ -1,7 +1,8 @@
 extends StaticBody3D
 
 @export var outline_material: Material
-
+@export var locked_sound: AudioStreamPlayer3D
+@export var open_sound: AudioStreamPlayer3D
 # A malha 3D é o "pai" deste StaticBody3D (o Object_10)
 @onready var mesh = get_parent() 
 
@@ -11,15 +12,15 @@ extends StaticBody3D
 var is_open = false
 
 func highlight() -> void:
-	if mesh and outline_material and not is_open:
-		# Aplica o material na malha visual
+	if not is_open:
 		GameManager.display_interact_text("Pressione [E] para Abrir")
 		if mesh is MeshInstance3D:
 			mesh.material_overlay = outline_material
 
 func unhighlight() -> void:
+	GameManager.clear_interaction_text()
 	if mesh and mesh is MeshInstance3D:
-		GameManager.clear_interaction_text()
+		
 		mesh.material_overlay = null
 
 func interact() -> void:
@@ -27,12 +28,17 @@ func interact() -> void:
 		return 
 		
 	if GameManager.has_gate_key:
+		if open_sound != null:
+			open_sound.play()
 		_open_gate()
 	else:
+		if locked_sound != null:
+			locked_sound.play()
 		GameManager.display_message("Trancado.")
 
 func _open_gate() -> void:
 	is_open = true
+	GameManager.has_gate_key = false
 	unhighlight() 
 	print("O Portão foi destrancado!")
 	

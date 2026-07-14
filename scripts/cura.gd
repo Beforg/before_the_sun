@@ -3,7 +3,8 @@ extends CollisionObject3D # Funciona tanto para Area3D quanto para StaticBody3D
 @export var item_name: String = "Cura"
 @export var outline_material: Material # Arraste aquele material "outline_mat.tres" para cá no Inspector!
 @onready var mesh = $Visual/LP_Material_0 # Certifique-se de que o nome da sua malha 3D está correto
-
+@onready var sound = $CollectSound
+@export var collision: CollisionShape3D
 func highlight() -> void:
 	# Aplica a borda brilhante por cima do material original
 	GameManager.display_interact_text("Pressione [E] para coletar Cura")
@@ -21,7 +22,15 @@ func interact() -> void:
 	
 	# Aqui você colocará os ifs do GameManager no futuro
 	if item_name == "Cura" && GameManager.has_free_space():
+		sound.play()
 		GameManager.display_message("Cura coletada")
 		GameManager.collect_cure()
+		mesh.visible = false
+		
+		# 3. Desativa a colisão para o jogador não pegar o item invisível duas vezes
+		collision.set_deferred("disabled", true)
+		
+		# 4. Pausa a execução deste script até o som terminar de tocar
+		await sound.finished
 		queue_free()
 	# Destrói o item após coletar

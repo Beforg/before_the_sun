@@ -1,7 +1,8 @@
 extends StaticBody3D
 
 @export var outline_material: Material
-
+@export var locked_sound: AudioStreamPlayer3D
+@export var open_sound: AudioStreamPlayer3D
 # A malha 3D é o "pai" deste StaticBody3D (o Object_10)
 @onready var mesh = get_parent() 
 
@@ -26,18 +27,29 @@ func interact() -> void:
 	if is_open:
 		return 
 		
-	if GameManager.has_gate_key:
+	if GameManager.has_door_key:
+		if open_sound != null:
+			open_sound.play()
 		_open_gate()
 	else:
+		if locked_sound != null:
+			locked_sound.play()
 		GameManager.display_message("Trancado.")
 
 func _open_gate() -> void:
 	is_open = true
 	unhighlight() 
-	print("O Portão foi destrancado!")
-	
+	print("A porta foi destrancada!")
+	GameManager.has_door_key = false
 	var tween = create_tween()
-	var posicao_final_aberta = Vector3(0.565, 5.001, 3.492) 
-	tween.tween_property(pivot, "position", posicao_final_aberta, 0.1).set_trans(Tween.TRANS_SINE)
-	# Gira o "avô" (nó Portao) 90 graus no eixo Y
-	tween.tween_property(pivot, "rotation_degrees:y", 90.0, 1.0).set_trans(Tween.TRANS_SINE)
+	tween.set_parallel(true)
+	
+	var posicao_final_aberta = Vector3(-140, 0, -46.237) 
+	
+	# 2. O TEMPO: Defina um tempo maior (ex: 1.5 segundos) para o movimento ser visível e suave
+	var tempo_de_abertura = 0.5
+	
+	# Move e Gira o portão de forma sincronizada
+	tween.tween_property(pivot, "position", posicao_final_aberta, tempo_de_abertura).set_trans(Tween.TRANS_SINE)
+	tween.tween_property(pivot, "rotation_degrees:y", -115.2, 0.45).set_trans(Tween.TRANS_SINE)
+	

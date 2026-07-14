@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dduvxw0ibuncg" path="res://scripts/upgrade.gd" id="1_mwy0h"]
 [ext_resource type="Material" uid="uid://rvfd8b3sv4o7" path="res://assets/models/items/outline_mat_collectible.tres" id="2_8b1dt"]
 [ext_resource type="Texture2D" uid="uid://d2ul7rnkymffr" path="res://assets/models/ups/raider_backpack_0.png" id="2_mwy0h"]
+[ext_resource type="AudioStream" uid="uid://cbiu5t4imlnem" path="res://assets/audio/item_collect.mp3" id="4_jc80d"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1j6he"]
 resource_name = "modddif_material_0"
@@ -60,3 +61,6 @@ mesh = SubResource("ArrayMesh_8svw5")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=671629950]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45825195, 0)
 shape = SubResource("CylinderShape3D_mwy0h")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=506784979]
+stream = ExtResource("4_jc80d")

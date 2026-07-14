@@ -11,7 +11,7 @@ size = Vector3(0.6020508, 1.7617188, 1)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_fn3g3"]
 height = 3.444336
-radius = 8.388672
+radius = 5.921875
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vbovd"]
 resource_name = "parasitezombie_Material1.005"

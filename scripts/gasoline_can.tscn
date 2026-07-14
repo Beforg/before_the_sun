@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://co5h7b1i6darl" path="res://assets/models/items/gasoline_can_0.png" id="2_1ocbb"]
 [ext_resource type="Material" uid="uid://rvfd8b3sv4o7" path="res://assets/models/items/outline_mat_collectible.tres" id="2_877ca"]
 [ext_resource type="Texture2D" uid="uid://cl8irroq6qcgo" path="res://assets/models/items/gasoline_can_1.png" id="3_877ca"]
-[ext_resource type="AudioStream" uid="uid://dek6hgqu8gcvo" path="res://assets/audio/collect.mp3" id="3_yb7no"]
 [ext_resource type="Texture2D" uid="uid://m26x2uxsf5oc" path="res://assets/models/items/gasoline_can_2.png" id="4_upu0q"]
+[ext_resource type="AudioStream" uid="uid://cbiu5t4imlnem" path="res://assets/audio/item_collect.mp3" id="6_877ca"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mqej"]
 resource_name = "initialShadingGroup"
@@ -60,10 +60,11 @@ data = PackedVector3Array(-0.298521, 1.0306652, 3.3386488, -0.464451, 0.934865, 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mmdvd"]
 size = Vector3(1, 1.175293, 0.7441406)
 
-[node name="GasolineCan" type="Area3D" unique_id=977605281]
+[node name="GasolineCan" type="Area3D" unique_id=977605281 node_paths=PackedStringArray("collision")]
 collision_layer = 2
 script = ExtResource("1_ikawi")
 outline_material = ExtResource("2_877ca")
+collision = NodePath("Visual/Object_2/StaticBody3D/CollisionShape3D")
 
 [node name="Visual" type="Node3D" parent="." unique_id=186430482]
 transform = Transform3D(0.315, 0, 0, 0, 0.315, 0, 0, 0, 0.315, 0, 0, 0)
@@ -79,9 +80,10 @@ shape = SubResource("ConcavePolygonShape3D_7uf11")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2115882575]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.036331773, 0.4951725, 0.00056132674)
+visible = false
 shape = SubResource("BoxShape3D_mmdvd")
 
 [node name="CollectSound" type="AudioStreamPlayer3D" parent="." unique_id=616751275]
-stream = ExtResource("3_yb7no")
+stream = ExtResource("6_877ca")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

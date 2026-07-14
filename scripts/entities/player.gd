@@ -1,56 +1,106 @@
 extends CharacterBody3D
 
+@export var lanterna_luz: SpotLight3D
 @export var walk_speed: float = 20.1
 @export var mouse_sensitivity: float = 0.003
+@onready var toggle_sound = $ToggleFlashlight
 @onready var camera = $Camera3D
 @onready var hand = $Camera3D/Hand
 @onready var interact_ray = $Camera3D/InteractRay
 var current_interactable: Node3D = null
-# -- Configurações de Câmera (Smoothing) --
-var camera_smoothing := 13.0 # Menor = câmera mais "pesada/arrastada"
-var target_cam_rotation := Vector2.ZERO 
 
+# -- Configurações de Câmera (Smoothing) --
+var camera_smoothing := 13.0 
+var target_cam_rotation := Vector2.ZERO
+
+# VIDEO 
+var is_watching_video: bool = false
+@export var video_intro: VideoStreamPlayer
+@export var subtitle_animator: AnimationPlayer
 # -- Configurações do Braço (Sway) --
 var sway_amount := 0.001
 var sway_smoothing := 8.0
 var mouse_delta := Vector2.ZERO
 var hand_initial_rotation := Vector3.ZERO
-var hand_initial_position := Vector3.ZERO # Salva o centro da mão para o balanço
+var hand_initial_position := Vector3.ZERO 
+var is_intro_playing: bool = true 
 
 # --- VARIÁVEIS DO HEAD BOBBING ---
-var bob_freq: float = 2.3 # Frequência base
+var bob_freq: float = 2.3 
 @export var bob_amp: float = 0.08 
 var t_bob: float = 0.0
 var base_camera_pos: Vector3 
 var light_drain_rate: float = 0.0095
-var light_drain_rate_combat = 0.05
-
-@onready var torch = $Camera3D/SpotLight3D # Sua nova lanterna 3D!
+var light_drain_rate_combat = 0.035
+@export var is_act_1: bool = false 
+@onready var torch = $Camera3D/SpotLight3D 
 @onready var heart_low = $HeartbeatLow
 @onready var heart_high = $HeartbeatHight
 @onready var som_passos = $SomPassos
 
 var passo_tocado = false
-# Variável de velocidade atual
 var speed: float = 5.0 
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	hand_initial_rotation = hand.rotation
-	hand_initial_position = hand.position # Inicializa a posição base da mão
+	hand_initial_position = hand.position 
 	target_cam_rotation.y = rotation.y
 	target_cam_rotation.x = camera.rotation.x
 	base_camera_pos = camera.position 
 	GameManager.difficulty_increased.connect(_on_difficulty_increased)
 	interact_ray.add_exception(self)
+	
+	if is_act_1 and video_intro and video_intro.stream != null:
+		is_watching_video = true
+		is_intro_playing = true 
+		
+		# >>> TRAVA ABSOLUTA DO MAPA <<<
+		# Força o mapa inteiro (o pai do jogador) a aceitar o Pause
+		get_parent().process_mode = Node.PROCESS_MODE_PAUSABLE
+		
+		# O vídeo recebe permissão VIP para ignorar o Pause
+		video_intro.process_mode = Node.PROCESS_MODE_ALWAYS 
+		
+		# Congela o universo (Monstros, Áudios do mapa, Física)
+		if subtitle_animator:
+			subtitle_animator.process_mode = Node.PROCESS_MODE_ALWAYS
+		
+		get_tree().paused = true 
+		
+		video_intro.play()
+		
+		# >>> MANDA TOCAR A LEGENDA JUNTO COM O VÍDEO <<<
+		if subtitle_animator:
+			subtitle_animator.play("falas_ato1")
+		
+		video_intro.finished.connect(_on_video_finished)
+		
+	else:
+		is_watching_video = false
+		
+		if video_intro:
+			video_intro.stop() 
+			video_intro.volume_db = -80.0 
+			video_intro.get_parent().queue_free() 
+			
+		_setup_intro_fade()
 
 func _input(event: InputEvent) -> void:
+	if is_intro_playing: 
+		return
 	var item_sound = $UseItem
 	
+	if event.is_action_pressed("toggle_flashlight"):
+		toggle_sound.play()
+		GameManager.is_flashlight_on = not GameManager.is_flashlight_on
+		if lanterna_luz:
+			lanterna_luz.visible = GameManager.is_flashlight_on
+			
 	if event.is_action_pressed("interagir"):
 		if current_interactable:
 			current_interactable.interact()
-	# CORRIGIDO: Removido o segundo bloco que rotacionava o player instantaneamente
+			
 	if event is InputEventMouseMotion:
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			mouse_delta = event.relative
@@ -58,19 +108,17 @@ func _input(event: InputEvent) -> void:
 			target_cam_rotation.x -= event.relative.y * mouse_sensitivity
 			target_cam_rotation.x = clamp(target_cam_rotation.x, deg_to_rad(-80), deg_to_rad(80))
 		
-		
 	if event.is_action_pressed("usar_cura"):
 		if GameManager.cures_count > 0:
 			GameManager.cures_count -= 1
 			GameManager.terror_level = 0
 			item_sound.play()
-			GameManager.is_addicted = false # Remove o vício
+			GameManager.is_addicted = false 
 			GameManager.adrenaline_use_history = []
 			print("Você usou a cura! Estado normalizado.")
 		else:
 			print("Você não tem curas!")
 
-	# USAR ADRENALINA (Tecla Q)
 	if event.is_action_pressed("usar_adrenalina"):
 		if GameManager.try_use_adrenaline():
 			GameManager.terror_level = max(0.0, GameManager.terror_level - 30.0)
@@ -89,39 +137,48 @@ func _input(event: InputEvent) -> void:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _physics_process(delta: float) -> void:
+	# >>> TRAVA DE SEGURANÇA MÁXIMA <<<
+	if is_watching_video:
+		return # Interrompe TUDO: sem interação, sem passos, sem física.
+		
 	_update_heartbeat_audio()
 	_check_interaction()
-	# --- 1. GESTÃO DE VELOCIDADE E ESTADOS ---
+	
 	if GameManager.is_adrenaline_active:
 		if GameManager.is_addicted:
-			camera.fov = lerp(camera.fov, 120.0, delta * 4.0)
-			speed = walk_speed * 1.15 # Bônus viciado
-			bob_freq = 2.4 # Passos um pouco mais rápidos
+			speed = walk_speed * 1.15 
+			bob_freq = 2.4 
 		else:
-			speed = walk_speed * 1.24 # Corrida desesperada
-			bob_freq = 1.8 # Câmera balança muito rápido!
-			camera.fov = lerp(camera.fov, 75.0, delta * 3.0)
+			speed = walk_speed * 1.24 
+			bob_freq = 1.8 
+			camera.fov = lerp(camera.fov, 85.0, delta * 3.0)
 	elif GameManager.terror_level >= 50.0:
-		speed = walk_speed * 0.8 # Lento por pânico
-		bob_freq = 1.5 # Passos pesados e arrastados
+		speed = walk_speed * 0.8 
+		bob_freq = 1.5 
 	else:
-		speed = walk_speed # Normal
-		bob_freq = 2.4 # Ritmo normal
+		speed = walk_speed 
+		bob_freq = 2.4 
+		camera.fov = lerp(camera.fov, 75.0, delta * 3.0)
 		
-	# --- 2. DRENO DA LANTERNA ---
 	if torch.light_energy > 0.2:
-		if GameManager.gasoline_count > 0:
+		if GameManager.gasoline_count > 0 and GameManager.is_flashlight_on:
 			torch.light_energy -= light_drain_rate_combat * delta
 			torch.spot_range -= (light_drain_rate_combat * 2.05) * delta
-		else:
+		elif GameManager.is_flashlight_on:
 			torch.light_energy -= light_drain_rate * delta
 			torch.spot_range -= (light_drain_rate * 2.05) * delta
 
-	# --- 3. FÍSICA E MOVIMENTO ---
 	if not is_on_floor():
 		velocity.y -= 9.8 * delta
+		
+	var input_dir = Vector2.ZERO
+	
+	if is_intro_playing:
+		input_dir = Vector2(0, -1) 
+		speed = walk_speed * 0.35 
+	else:
+		input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 
-	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
 	if direction:
@@ -133,12 +190,10 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-	# --- 4. GATILHO DE TIMING DO HEAD BOBBING (Movimentação Física) ---
 	if is_on_floor() and direction != Vector3.ZERO:
 		t_bob += delta * velocity.length() 
 		var pure_sin = sin(t_bob * bob_freq)
 		
-		# --- GATILHO DO ÁUDIO DOS PASSOS ---
 		if pure_sin < -0.8 and not passo_tocado:
 			tocar_passo()
 			passo_tocado = true
@@ -149,15 +204,13 @@ func _physics_process(delta: float) -> void:
 		passo_tocado = false
 
 func _process(delta: float) -> void:
-	# ==========================================
-	# 1. CAMERA SMOOTHING (Arrasto do Pescoço)
-	# ==========================================
+	# >>> TRAVA DE SEGURANÇA MÁXIMA <<<
+	if is_watching_video:
+		return # Interrompe a câmera e balanços de arma.
+		
 	rotation.y = lerp_angle(rotation.y, target_cam_rotation.y, camera_smoothing * delta)
 	camera.rotation.x = lerp_angle(camera.rotation.x, target_cam_rotation.x, camera_smoothing * delta)
 
-	# ==========================================
-	# 2. HEAD BOBBING VISUAL (Aplicado no frame de renderização)
-	# ==========================================
 	var horizontal_velocity = Vector2(velocity.x, velocity.z).length()
 	if is_on_floor() and horizontal_velocity > 0.1:
 		var pure_sin = sin(t_bob * bob_freq)
@@ -166,7 +219,6 @@ func _process(delta: float) -> void:
 		
 		camera.position = base_camera_pos + Vector3(bob_x, bob_y, 0)
 		
-		# Faz a mão acompanhar sutilmente o balanço do corpo para dar peso extra
 		var hand_bob_y = hand_initial_position.y + (pure_sin * (bob_amp * 0.2))
 		var hand_bob_x = hand_initial_position.x + (cos(t_bob * bob_freq / 2.0) * (bob_amp * 0.1))
 		hand.position = hand.position.lerp(Vector3(hand_bob_x, hand_bob_y, hand_initial_position.z), delta * 12.0)
@@ -175,16 +227,12 @@ func _process(delta: float) -> void:
 		camera.position.x = lerp(camera.position.x, base_camera_pos.x, delta * 10.0)
 		hand.position = hand.position.lerp(hand_initial_position, delta * 10.0)
 
-	# ==========================================
-	# 3. WEAPON SWAY (Arrasto Lateral do Braço)
-	# ==========================================
 	var target_sway_x = hand_initial_rotation.x + (mouse_delta.y * sway_amount)
 	var target_sway_y = hand_initial_rotation.y + (mouse_delta.x * sway_amount)
 
 	hand.rotation.x = lerp_angle(hand.rotation.x, target_sway_x, sway_smoothing * delta)
 	hand.rotation.y = lerp_angle(hand.rotation.y, target_sway_y, sway_smoothing * delta)
 
-	# Reduz progressivamente o delta do mouse acumulado
 	mouse_delta = mouse_delta.lerp(Vector2.ZERO, sway_smoothing * delta)
 
 func _update_heartbeat_audio():
@@ -218,17 +266,47 @@ func _check_interaction() -> void:
 	interact_ray.force_raycast_update()
 	if interact_ray.is_colliding():
 		var hit = interact_ray.get_collider()
-		# Se o laser bateu em algo novo e que possui a função "interact"
 		if hit != current_interactable and hit.has_method("interact"):
 			print("Colidindo com item!!")
 			if current_interactable:
-				current_interactable.unhighlight() # Tira o brilho do antigo
+				current_interactable.unhighlight() 
 				
 			current_interactable = hit
-			current_interactable.highlight() # Bota brilho no novo
+			current_interactable.highlight() 
 			
 	else:
-		# Se o laser não está encostando em nada, remove o brilho do que estava olhando
 		if current_interactable:
 			current_interactable.unhighlight()
 			current_interactable = null
+
+func _setup_intro_fade() -> void:
+	var canvas = CanvasLayer.new()
+	canvas.layer = 100 
+	add_child(canvas)
+
+	var fade_rect = ColorRect.new()
+	fade_rect.color = Color.BLACK
+	fade_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	canvas.add_child(fade_rect)
+
+	var tween = create_tween()
+	tween.tween_interval(3.5) 
+	tween.tween_property(fade_rect, "modulate:a", 0.0, 3) 
+
+	tween.tween_callback(func(): 
+		is_intro_playing = false
+		canvas.queue_free() 
+		print("DIRETOR: Fade terminado, jogador livre!")
+	)
+
+func _on_video_finished() -> void:
+	is_watching_video = false
+	
+	# >>> DESCONGELA O JOGO <<<
+	get_tree().paused = false
+	if subtitle_animator:
+		subtitle_animator.stop() # Para a animação
+	if video_intro:
+		video_intro.get_parent().queue_free() 
+		
+	_setup_intro_fade()
